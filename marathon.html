@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDU-HEART-RUN | NUESA Faculty Marathon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript"> (function() { emailjs.init("lBBi498Z8dJYiXcJR"); })(); </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; } 
+        h1, h2, h3, .timer-text { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+        .neon-red { color: #ff2a2a; text-shadow: 0 0 10px rgba(255, 42, 42, 0.7); }
+        .bg-neon-red { background-color: #ff2a2a; box-shadow: 0 0 15px rgba(255, 42, 42, 0.6); }
+        .hero-bg { background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url('https://images.unsplash.com/photo-1552674605-15c3705e97ce?q=80&w=1200'); background-size: cover; background-position: center; background-attachment: fixed; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <nav class="bg-slate-900 border-b border-slate-800 shadow-2xl sticky top-0 z-40 p-4 flex justify-between items-center">
+        <span class="text-2xl font-black text-white tracking-tighter">EDU-<span class="text-[#ff2a2a]">HEART-RUN</span></span>
+        <a href="volunteer.html" class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-widest transition"><i class="fa-solid fa-users mr-1"></i> Volunteer</a>
+    </nav>
+
+    <header class="hero-bg py-24 px-4 text-center relative overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <span class="border border-[#ff2a2a] text-[#ff2a2a] text-xs font-black px-4 py-1.5 rounded-full tracking-[0.2em] uppercase bg-red-900/20 shadow-[0_0_10px_rgba(255,42,42,0.3)]">Official Fitness Event</span>
+            <h1 class="text-4xl md:text-7xl font-black mt-6 mb-2 tracking-wide text-white">NUESA <span class="neon-red">FACULTY MARATHON</span></h1>
+            
+            <div class="inline-flex items-center gap-4 bg-slate-800/80 border border-slate-700 backdrop-blur-md px-6 py-3 rounded-lg mb-10 mt-6">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-clock text-[#ff2a2a]"></i><span class="font-bold text-sm tracking-widest text-[#ff2a2a]" id="live-date-text">ANTICIPATION STAGE - TBD</span></div>
+            </div>
+            
+            <div class="flex justify-center gap-3 md:gap-6 text-center">
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="days" class="text-4xl md:text-6xl font-black neon-red timer-text">-</div><div class="text-xs uppercase font-bold mt-2">Days</div></div>
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="hours" class="text-4xl md:text-6xl font-black text-white timer-text">-</div><div class="text-xs uppercase font-bold mt-2">Hours</div></div>
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="minutes" class="text-4xl md:text-6xl font-black text-white timer-text">-</div><div class="text-xs uppercase font-bold mt-2">Mins</div></div>
+                <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="seconds" class="text-4xl md:text-6xl font-black neon-red timer-text">-</div><div class="text-xs uppercase font-bold mt-2">Secs</div></div>
+            </div>
+        </div>
+    </header>
+
+    <section id="sponsors-top" class="py-12 px-4 max-w-6xl mx-auto w-full hidden">
+        <p class="text-center text-slate-500 text-sm font-bold uppercase tracking-widest mb-8">Official Event Partners</p>
+        <div id="official-logos" class="flex flex-wrap justify-center items-center gap-8 md:gap-16"></div>
+    </section>
+
+    <main id="register" class="flex-grow flex items-center justify-center p-4 py-8 z-20 relative">
+        <div class="max-w-3xl w-full bg-slate-900 shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-slate-700 rounded-2xl overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 via-[#ff2a2a] to-orange-500"></div>
+            
+            <div class="p-8 text-center border-b border-slate-800">
+                <h2 class="text-3xl font-black text-white tracking-wide">SECURE YOUR BIB</h2>
+            </div>
+            
+            <div class="p-8">
+                <div id="closedSection" class="hidden text-center py-10">
+                    <i class="fa-solid fa-lock text-6xl text-[#ff2a2a] mb-6 drop-shadow-[0_0_15px_rgba(255,42,42,0.5)]"></i>
+                    <h2 class="text-3xl font-black text-white mb-3 tracking-wide uppercase">REGISTRATION CLOSED</h2>
+                    <p class="text-slate-400 font-semibold max-w-md mx-auto">The maximum capacity has been reached or the deadline has passed. We can't wait to see you at the starting line!</p>
+                </div>
+
+                <form id="marathonForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-800/50 p-5 rounded-xl border border-slate-700 mb-2">
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Status</label><select id="mStatus" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5"><option value="">Select...</option><option value="Student">Student</option><option value="Staff">Staff</option></select></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Title</label><select id="mTitle" required disabled class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 opacity-50"><option value="">Select Status First...</option></select></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Full Name</label><input type="text" id="mName" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5 uppercase font-semibold"></div>
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">WhatsApp</label><input type="tel" id="mPhone" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Email Address</label><input type="email" id="mEmail" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"></div>
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Faculty</label><select id="mFacultySelect" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5 mb-2"><option value="">Select...</option><option value="EDUCATION">EDUCATION</option><option value="FASA">FASA</option><option value="CASA">CASA</option><option value="MSA">MSA</option><option value="FSS">FSS</option><option value="Others">Others</option></select><input type="text" id="mFacultyOther" placeholder="Enter Faculty" class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 uppercase hidden"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-slate-800/50 rounded-xl border border-slate-700">
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Age (Min: 16)</label><input type="number" id="mAge" min="1" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 font-black text-center text-xl"><p id="ageWarning" class="text-xs text-[#ff2a2a] font-bold mt-2 hidden">Must be 16+</p></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Category</label><select id="mCategory" required disabled class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 opacity-50"><option value="">Enter Age First...</option></select></div>
+                    </div>
+
+                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Medical Status</label><select id="mHealth" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Asthmatic">Asthmatic</option><option value="Other">Other</option></select></div>
+
+                    <div class="bg-red-900/20 border border-red-900/50 p-5 rounded-xl mt-6"><label class="flex items-start cursor-pointer"><input type="checkbox" id="mWaiver" required class="mt-1 mr-4 h-5 w-5 accent-[#ff2a2a] rounded"><span class="text-sm text-slate-300 leading-relaxed"><strong class="text-white block mb-1">Liability & Attestation</strong> I attest I am physically fit to participate and wave organizers of any liability.</span></label></div>
+
+                    <button type="submit" id="btnSubmit" class="w-full bg-neon-red text-white font-black text-xl tracking-wider py-4 rounded-xl hover:bg-red-600 transition shadow-[0_0_20px_rgba(255,42,42,0.4)] mt-6">CONFIRM REGISTRATION</button>
+                </form>
+
+                <div id="successSection" class="hidden text-center py-6">
+                    <h2 class="text-3xl font-black text-white mb-2">YOU ARE IN!</h2>
+                    <div id="digitalBib" class="relative bg-slate-900 border-2 p-6 max-w-sm mx-auto rounded-xl overflow-hidden mb-8 mt-6">
+                        <div id="bibHeader" class="absolute top-0 left-0 w-full h-4"></div>
+                        <h3 class="font-black text-2xl tracking-tighter mt-4 text-white">EDU-<span id="bibLogoHeart">HEART-RUN</span></h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Official Participant</p>
+                        <div class="text-7xl font-black text-white font-[Oswald] mb-4" id="bibNumber">000</div>
+                        <div class="bg-slate-800 py-3 px-4 rounded border border-slate-700 inline-block w-full">
+                            <p class="text-2xl font-black text-white uppercase truncate" id="bibName">NAME</p>
+                            <p class="text-[11px] font-bold uppercase mt-1 tracking-widest" id="bibCategory">CATEGORY</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase mt-1 truncate" id="bibFaculty">FACULTY</p>
+                        </div>
+                    </div>
+                    <button onclick="downloadBib()" class="bg-white text-slate-900 font-black py-4 px-8 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.4)] w-full mb-4"><i class="fa-solid fa-download mr-2"></i> DOWNLOAD BIB</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="sponsors-bottom" class="py-12 px-4 max-w-6xl mx-auto w-full hidden border-t border-slate-800 mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-center">
+            <div id="sup-wrap" class="hidden"><p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Supporting Partners</p><div id="supporting-logos" class="flex flex-wrap justify-center items-center gap-6"></div></div>
+            <div id="hyd-wrap" class="hidden"><p class="text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">Hydration Partners</p><div id="hydration-logos" class="flex flex-wrap justify-center items-center gap-6"></div></div>
+        </div>
+    </section>
+
+    <footer class="bg-black text-white py-8 text-center mt-auto border-t border-slate-800">
+        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">© 2026 NUESA Sports Committee | EDU-HEART-RUN</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const app = initializeApp({ apiKey: "AIzaSyDtxFsLYoe0NYlZRWiXgEM90IYKMwx7K8s", projectId: "sonic-verbena-239117" }); 
+        const db = getFirestore(app);
+
+        async function loadSponsors() {
+            try {
+                const snap = await getDocs(collection(db, "edu_heart_sponsors"));
+                if(snap.empty) return;
+                let off='', sup='', hyd='';
+                snap.forEach(d => {
+                    const s = d.data();
+                    const img = `<img src="${s.logo}" alt="${s.name}" class="h-12 md:h-16 object-contain bg-white/5 rounded-lg p-2 hover:bg-white/10 transition">`;
+                    if(s.category === 'Official') off += img; else if(s.category === 'Supporting') sup += img; else if(s.category === 'Hydration') hyd += img;
+                });
+                if(off) { document.getElementById('official-logos').innerHTML = off; document.getElementById('sponsors-top').classList.remove('hidden'); }
+                if(sup || hyd) document.getElementById('sponsors-bottom').classList.remove('hidden');
+                if(sup) { document.getElementById('supporting-logos').innerHTML = sup; document.getElementById('sup-wrap').classList.remove('hidden'); }
+                if(hyd) { document.getElementById('hydration-logos').innerHTML = hyd; document.getElementById('hyd-wrap').classList.remove('hidden'); }
+            } catch(e) {}
+        }
+        loadSponsors();
+
+        async function loadSettings() {
+            try {
+                const snap = await getDoc(doc(db, "edu_heart_settings", "event_info"));
+                if(snap.exists()) {
+                    const data = snap.data();
+                    if(data.runnerGate === 'closed') { document.getElementById('marathonForm').classList.add('hidden'); document.getElementById('closedSection').classList.remove('hidden'); }
+                    if(data.status === 'active') {
+                        const targetTime = new Date(data.targetDate).getTime();
+                        const timerType = data.timerType || 'event';
+                        const prefix = timerType === 'registration' ? 'REG CLOSES: ' : 'RACE DAY: ';
+                        document.getElementById("live-date-text").innerText = prefix + new Date(data.targetDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+                        
+                        setInterval(() => {
+                            const d = targetTime - new Date().getTime();
+                            if(d < 0) {
+                                document.getElementById("days").innerHTML = "00"; document.getElementById("hours").innerHTML = "00"; document.getElementById("minutes").innerHTML = "00"; document.getElementById("seconds").innerHTML = "00";
+                                if(timerType === 'registration') { document.getElementById('marathonForm').classList.add('hidden'); document.getElementById('closedSection').classList.remove('hidden'); }
+                                return;
+                            }
+                            document.getElementById("days").innerHTML = Math.floor(d/(1000*60*60*24)).toString().padStart(2, '0');
+                            document.getElementById("hours").innerHTML = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2, '0');
+                            document.getElementById("minutes").innerHTML = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2, '0');
+                            document.getElementById("seconds").innerHTML = Math.floor((d%(1000*60))/1000).toString().padStart(2, '0');
+                        }, 1000);
+                    }
+                }
+            } catch(e) {}
+        }
+        loadSettings();
+
+        document.getElementById('mStatus').addEventListener('change', (e) => {
+            const t = document.getElementById('mTitle');
+            if(e.target.value === 'Student') { t.innerHTML='<option value="Mr.">Mr.</option><option value="Miss">Miss</option><option value="Mrs.">Mrs.</option>'; t.disabled=false; t.classList.remove('opacity-50'); }
+            else if(e.target.value === 'Staff') { t.innerHTML='<option value="Prof.">Prof.</option><option value="Dr.">Dr.</option><option value="Mr.">Mr.</option><option value="Mrs.">Mrs.</option>'; t.disabled=false; t.classList.remove('opacity-50'); }
+        });
+
+        document.getElementById('mAge').addEventListener('input', (e) => {
+            const age = parseInt(e.target.value); const cat = document.getElementById('mCategory');
+            if(age < 16) { cat.innerHTML='<option>Too Young</option>'; cat.disabled=true; }
+            else if(age <= 44) { cat.innerHTML='<option value="10KM Run">10KM Run (Orange Desk)</option><option value="5KM Run">5KM Run (Purple Desk)</option>'; cat.disabled=false; cat.classList.remove('opacity-50'); }
+            else { cat.innerHTML='<option value="5KM Run">5KM Run (Purple Desk)</option><option value="3KM Fitness Walk">3KM Walk (Green Desk)</option>'; cat.disabled=false; cat.classList.remove('opacity-50'); }
+        });
+
+        document.getElementById('mFacultySelect').addEventListener('change', (e) => {
+            const fOther = document.getElementById('mFacultyOther');
+            if(e.target.value === 'Others') { fOther.classList.remove('hidden'); fOther.required = true; } 
+            else { fOther.classList.add('hidden'); fOther.required = false; }
+        });
+
+        document.getElementById('marathonForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit'); btn.disabled = true; btn.innerHTML = 'PROCESSING...';
+            const name = document.getElementById('mName').value; const category = document.getElementById('mCategory').value; const email = document.getElementById('mEmail').value;
+            const faculty = document.getElementById('mFacultySelect').value === 'Others' ? document.getElementById('mFacultyOther').value.toUpperCase() : document.getElementById('mFacultySelect').value;
+            
+            try {
+                const snap = await getDocs(collection(db, "edu_heart_run"));
+                const formattedBib = (snap.size + 1).toString().padStart(3, '0');
+
+                await addDoc(collection(db, "edu_heart_run"), {
+                    status: document.getElementById('mStatus').value, title: document.getElementById('mTitle').value,
+                    name, phone: document.getElementById('mPhone').value, email, faculty, age: document.getElementById('mAge').value,
+                    category, healthStatus: document.getElementById('mHealth').value,
+                    accredited: false, bibNumber: formattedBib, registeredAt: serverTimestamp()
+                });
+
+                const bibHeader = document.getElementById('bibHeader'); const digitalBib = document.getElementById('digitalBib'); const bibCatText = document.getElementById('bibCategory'); const bibLogoHeart = document.getElementById('bibLogoHeart');
+                if(category.includes("10KM")) { bibHeader.className = "absolute top-0 left-0 w-full h-4 bg-orange-500"; digitalBib.className = "relative bg-slate-900 border-2 border-orange-500 p-6 max-w-sm mx-auto rounded-xl shadow-[0_0_40px_

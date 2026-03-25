@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marathon Command Center | EDU-HEART-RUN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        h1, h2, h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+        .neon-red { color: #ff2a2a; text-shadow: 0 0 10px rgba(255, 42, 42, 0.7); }
+        .bg-neon-red { background-color: #ff2a2a; box-shadow: 0 0 15px rgba(255, 42, 42, 0.6); }
+        .nav-btn { padding: 10px 16px; font-weight: 700; color: #94a3b8; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .nav-btn.active { color: #ff2a2a; border-bottom-color: #ff2a2a; background: rgba(255, 42, 42, 0.1); }
+        .section { display: none; } .section.active { display: block; }
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4">
+        <div class="bg-slate-900 p-8 max-w-sm w-full text-center rounded-2xl shadow-[0_0_40px_rgba(255,42,42,0.3)] border border-[#ff2a2a]">
+            <i class="fa-solid fa-heart-pulse text-5xl neon-red mb-4"></i>
+            <h2 class="text-3xl font-black text-white mb-1 tracking-wide">COMMAND CENTER</h2>
+            <p class="text-xs text-slate-400 mb-6 font-bold tracking-widest uppercase">EDU-Heart-Run</p>
+            <input type="password" id="adm-pass" placeholder="ENTER SECURE PIN" class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-4 text-center tracking-[0.3em] text-xl mb-4 focus:border-[#ff2a2a] outline-none uppercase font-black transition">
+            <button onclick="checkLogin()" class="w-full bg-neon-red text-white font-black tracking-widest py-4 rounded-lg hover:bg-red-600 transition shadow-lg">AUTHORIZE</button>
+            <p id="login-error" class="text-[#ff2a2a] text-xs font-bold mt-4 hidden tracking-widest"><i class="fa-solid fa-triangle-exclamation"></i> INCORRECT PIN</p>
+        </div>
+    </div>
+
+    <nav class="bg-slate-900 border-b border-slate-800 shadow-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3 w-full md:w-auto justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-heart-pulse text-[#ff2a2a] text-2xl"></i>
+                    <span class="text-xl font-black text-white tracking-tighter block">EDU-<span class="text-[#ff2a2a]">ADMIN</span></span>
+                </div>
+            </div>
+            <div class="flex gap-2 overflow-x-auto w-full md:w-auto no-scrollbar pb-1 md:pb-0">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active whitespace-nowrap">DASHBOARD</button>
+                <button onclick="switchTab('runners')" id="btn-runners" class="nav-btn whitespace-nowrap">RUNNERS</button>
+                <button onclick="switchTab('volunteers')" id="btn-volunteers" class="nav-btn whitespace-nowrap">VOLUNTEERS</button>
+                <button onclick="switchTab('sponsors')" id="btn-sponsors" class="nav-btn whitespace-nowrap">SPONSORS</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full">
+
+        <div id="dashboard" class="section active space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <h2 class="text-3xl font-black text-white tracking-wide">Live Overview</h2>
+                <button onclick="fetchData()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2"><i class="fa-solid fa-rotate-right"></i> REFRESH</button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                    <h3 class="text-white font-black text-xl mb-1 uppercase"><i class="fa-solid fa-clock text-[#ff2a2a] mr-2"></i> Countdown Timer</h3>
+                    <p class="text-xs text-slate-400 mb-4">Set target date and what the timer represents.</p>
+                    <div class="grid grid-cols-1 gap-2">
+                        <div class="flex gap-2">
+                            <input type="datetime-local" id="admin-date" class="bg-slate-900 text-white p-3 rounded-lg border border-slate-600 w-full outline-none focus:border-[#ff2a2a]">
+                            <select id="admin-status" class="bg-slate-900 text-white p-3 rounded-lg border border-slate-600 outline-none"><option value="anticipation">TBD / Paused</option><option value="active">Active</option></select>
+                        </div>
+                        <select id="admin-timer-type" class="bg-slate-900 text-white p-3 rounded-lg border border-slate-600 outline-none font-bold text-sm w-full focus:border-[#ff2a2a]">
+                            <option value="event">Timer Target: Event Day Start</option>
+                            <option value="registration">Timer Target: Registration Closing Deadline</option>
+                        </select>
+                    </div>
+                    <button onclick="updateLiveTimer()" class="w-full mt-3 bg-blue-600 text-white px-4 py-3 rounded-lg font-black tracking-widest hover:bg-blue-500 transition">UPDATE TIMER</button>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
+                    <h3 class="text-white font-black text-xl mb-1 uppercase"><i class="fa-solid fa-lock text-[#ff2a2a] mr-2"></i> Manual Gates</h3>
+                    <p class="text-xs text-slate-400 mb-4">Instantly open or close public registration forms.</p>
+                    <div class="grid grid-cols-2 gap-4 h-full pb-6">
+                        <button onclick="toggleGate('runner')" id="btn-gate-runner" class="bg-slate-900 border-2 border-slate-700 text-slate-400 font-black py-4 rounded-lg transition tracking-widest flex flex-col items-center justify-center gap-2"><i class="fa-solid fa-spinner fa-spin text-xl"></i> RUNNERS</button>
+                        <button onclick="toggleGate('volunteer')" id="btn-gate-volunteer" class="bg-slate-900 border-2 border-slate-700 text-slate-400 font-black py-4 rounded-lg transition tracking-widest flex flex-col items-center justify-center gap-2"><i class="fa-solid fa-spinner fa-spin text-xl"></i> CREW</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Total Runners</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-total">0</h3></div>
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-orange-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">10KM Endurance</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-10k">0</h3></div>
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-purple-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">5KM Paced</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-5k">0</h3></div>
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-green-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">3KM Walk</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-3k">0</h3></div>
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-emerald-400 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Checked-In</p><h3 class="text-4xl font-black mt-2 text-emerald-400" id="stat-present">0</h3></div>
+                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-400 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Total Crew</p><h3 class="text-4xl font-black mt-2 text-blue-400" id="stat-crew">0</h3><i class="fa-solid fa-headset absolute -bottom-2 -right-2 text-5xl text-blue-900 opacity-20"></i></div>
+            </div>
+        </div>
+
+        <div id="runners" class="section space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
+                <h2 class="text-3xl font-black text-white tracking-wide">Runner Database</h2>
+                <button onclick="downloadCSV('runners')" class="w-full md:w-auto bg-green-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-green-500 transition shadow-[0_0_15px_rgba(34,197,94,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT RUNNERS</button>
+            </div>
+            <div class="bg-slate-800 shadow-2xl rounded-xl overflow-x-auto border border-slate-700">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-slate-900 text-xs text-slate-400 uppercase font-bold tracking-wider border-b border-slate-700"><tr><th class="p-4 pl-6">Bib #</th><th class="p-4">Athlete Data</th><th class="p-4">Type / Age</th><th class="p-4">Category</th><th class="p-4">Faculty</th><th class="p-4">Health</th><th class="p-4 pr-6">Status</th></tr></thead>
+                    <tbody id="runners-tbody" class="divide-y divide-slate-700/50 text-slate-300"><tr><td colspan="7" class="p-8 text-center text-slate-500 font-bold uppercase tracking-widest">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="volunteers" class="section space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
+                <h2 class="text-3xl font-black text-white tracking-wide">Volunteer Crew</h2>
+                <button onclick="downloadCSV('volunteers')" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-blue-500 transition shadow-[0_0_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT CREW</button>
+            </div>
+            <div class="bg-slate-800 shadow-2xl rounded-xl overflow-x-auto border border-slate-700">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-slate-900 text-xs text-slate-400 uppercase font-bold tracking-wider border-b border-slate-700"><tr><th class="p-4 pl-6">Crew Member</th><th class="p-4">Unit / Role</th><th class="p-4">Faculty</th><th class="p-4">Shirt Size</th><th class="p-4 pr-6">Health Status</th></tr></thead>
+                    <tbody id="volunteers-tbody" class="divide-y divide-slate-700/50 text-slate-300"><tr><td colspan="5" class="p-8 text-center text-slate-500 font-bold uppercase tracking-widest">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sponsors" class="section space-y-6">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <h2 class="text-3xl font-black text-white tracking-wide">Sponsors & Partners</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 md:col-span-1 h-fit">
+                    <h3 class="text-white font-black text-xl mb-4"><i class="fa-solid fa-plus text-[#ff2a2a] mr-2"></i> ADD NEW PARTNER</h3>
+                    <form id="sponsorForm" class="space-y-4">
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Brand Name</label><input type="text" id="spName" required class="w-full bg-slate-900 border border-slate-600 text-white rounded p-3 outline-none focus:border-[#ff2a2a]"></div>
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Category</label><select id="spCategory" required class="w-full bg-slate-900 border border-slate-600 text-white rounded p-3 outline-none focus:border-[#ff2a2a]"><option value="Official">Official Partner (Top)</option><option value="Supporting">Supporting Partner (Bottom)</option><option value="Hydration">Hydration Partner (Bottom)</option></select></div>
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-1">Brand Logo</label><input type="file" id="spLogo" accept="image/*" required class="w-full text-slate-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#ff2a2a] file:text-white hover:file:bg-red-600 cursor-pointer"></div>
+                        <button type="submit" id="btnSponsor" class="w-full bg-green-600 text-white font-bold py-3 rounded hover:bg-green-500 transition mt-2">UPLOAD SPONSOR</button>
+                    </form>
+                </div>
+
+                <div class="md:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-white font-black text-xl mb-4">ACTIVE SPONSORS</h3>
+                    <div id="sponsors-list" class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="col-span-full text-slate-500 font-bold uppercase tracking-widest text-center py-10">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const app = initializeApp({ apiKey: "AIzaSyDtxFsLYoe0NYlZRWiXgEM90IYKMwx7K8s", projectId: "sonic-verbena-239117" }); 
+        const db = getFirestore(app);
+
+        let allRunners = []; let allVolunteers = []; let gates = { runner: 'open', volunteer: 'open' };
+
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active'); document.getElementById(`btn-${tabId}`).classList.add('active');
+        };
+
+        window.checkLogin = () => {
+            if(document.getElementById('adm-pass').value.toUpperCase() === 'EDURUN26') {
+                document.getElementById('login-modal').classList.add('hidden');
+                fetchData(); fetchTimerSettings(); fetchSponsors();
+            } else document.getElementById('login-error').classList.remove('hidden');
+        };
+
+        async function fetchTimerSettings() {
+            try {
+                const snap = await getDoc(doc(db, "edu_heart_settings", "event_info"));
+                if(snap.exists()) {
+                    const data = snap.data();
+                    if(data.runnerGate) gates.runner = data.runnerGate;
+                    if(data.volunteerGate) gates.volunteer = data.volunteerGate;
+                    document.getElementById('admin-date').value = data.targetDate || "";
+                    document.getElementById('admin-status').value = data.status || "anticipation";
+                    document.getElementById('admin-timer-type').value = data.timerType || "event";
+                }
+                updateGateUI();
+            } catch(e) {}
+        }
+
+        function updateGateUI() {
+            const rBtn = document.getElementById('btn-gate-runner'); const vBtn = document.getElementById('btn-gate-volunteer');
+            if(gates.runner === 'open') { rBtn.className = "bg-green-900/30 border-2 border-green-500 text-green-400 font-black py-4 rounded-lg flex flex-col items-center justify-center gap-1 shadow-[0_0_15px_rgba(34,197,94,0.2)]"; rBtn.innerHTML = '<i class="fa-solid fa-unlock text-2xl"></i> RUNNERS: OPEN'; } 
+            else { rBtn.className = "bg-red-900/30 border-2 border-red-500 text-red-400 font-black py-4 rounded-lg flex flex-col items-center justify-center gap-1 shadow-[0_0_15px_rgba(255,42,42,0.2)]"; rBtn.innerHTML = '<i class="fa-solid fa-lock text-2xl"></i> RUNNERS: CLOSED'; }
+            if(gates.volunteer === 'open') { vBtn.className = "bg-green-900/30 border-2 border-green-500 text-green-400 font-black py-4 rounded-lg flex flex-col items-center justify-center gap-1 shadow-[0_0_15px_rgba(34,197,94,0.2)]"; vBtn.innerHTML = '<i class="fa-solid fa-unlock text-2xl"></i> CREW: OPEN'; } 
+            else { vBtn.className = "bg-red-900/30 border-2 border-red-500 text-red-400 font-black py-4 rounded-lg flex flex-col items-center justify-center gap-1 shadow-[0_0_15px_rgba(255,42,42,0.2)]"; vBtn.innerHTML = '<i class="fa-solid fa-lock text-2xl"></i> CREW: CLOSED'; }
+        }
+
+        window.toggleGate = async (type) => {
+            if(!confirm(`Change ${type} registration status?`)) return;
+            const newState = gates[type] === 'open' ? 'closed' : 'open'; gates[type] = newState; updateGateUI();
+            try { await setDoc(doc(db, "edu_heart_settings", "event_info"), { [`${type}Gate`]: newState }, { merge: true }); } catch(e) { }
+        };
+
+        window.updateLiveTimer = async () => {
+            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date').value, status: document.getElementById('admin-status').value, timerType: document.getElementById('admin-timer-type').value }, { merge: true });
+            alert("Live Timer Updated!");
+        };
+
+        window.fetchData = async () => {
+            try {
+                const snapRunners = await getDocs(query(collection(db, "edu_heart_run"), orderBy("bibNumber", "asc"))); allRunners = snapRunners.docs.map(d => ({ id: d.id, ...d.data() }));
+                const snapVol = await getDocs(collection(db, "edu_heart_volunteers")); allVolunteers = snapVol.docs.map(d => ({ id: d.id, ...d.data() }));
+                updateDashboard(); renderRunnersTable(); renderVolunteersTable();
+            } catch (e) { }
+        };
+
+        function updateDashboard() {
+            document.getElementById('stat-total').innerText = allRunners.length;
+            document.getElementById('stat-10k').innerText = allRunners.filter(r => r.category && r.category.includes("10KM")).length;
+            document.getElementById('stat-5k').innerText = allRunners.filter(r => r.category && r.category.includes("5KM")).length;
+            document.getElementById('stat

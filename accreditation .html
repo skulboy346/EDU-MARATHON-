@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Event Desks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style> body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; } </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900 p-4">
+        <div class="bg-slate-800 p-8 max-w-sm w-full text-center rounded-xl border border-slate-700 shadow-2xl">
+            <i class="fa-solid fa-qrcode text-5xl text-white mb-4"></i>
+            <h2 class="text-2xl font-black text-white mb-2">ACCREDITATION</h2>
+            <p class="text-xs text-slate-400 mb-6">Enter your assigned Desk PIN</p>
+            <input type="password" id="desk-pin" class="w-full bg-slate-900 text-white rounded-lg p-4 text-center text-xl font-bold mb-4 uppercase outline-none focus:border-white border border-slate-600 shadow-inner">
+            <button onclick="loginDesk()" class="w-full bg-slate-200 text-slate-900 font-bold py-4 rounded-lg hover:bg-white transition shadow-lg">OPEN DESK</button>
+            <p id="login-error" class="text-[#ff2a2a] text-xs font-bold mt-4 hidden tracking-widest uppercase">Invalid Desk PIN</p>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden flex-col min-h-screen">
+        <nav id="desk-nav" class="p-4 border-b flex justify-between items-center shadow-lg">
+            <h1 id="desk-title" class="text-2xl font-black uppercase">DESK</h1>
+            <p class="text-sm font-bold text-white bg-slate-900 px-3 py-1 rounded">In: <span id="count">0</span></p>
+        </nav>
+        <div class="p-4 max-w-4xl mx-auto w-full">
+            <div class="relative mb-6">
+                <i class="fa-solid fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="search" onkeyup="filterRunners()" placeholder="Search Name or Bib..." class="w-full bg-slate-800 py-4 pl-12 pr-4 rounded-xl text-white font-bold outline-none focus:ring-2 focus:ring-white border border-slate-600 transition shadow-inner">
+            </div>
+            <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-20"></div>
+        </div>
+        
+        <div class="fixed bottom-6 right-6">
+            <button onclick="loadDeskData()" class="bg-slate-800 text-white p-4 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.8)] border border-slate-700 hover:bg-slate-700 transition flex items-center justify-center">
+                <i class="fa-solid fa-rotate text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const app = initializeApp({ apiKey: "AIzaSyDtxFsLYoe0NYlZRWiXgEM90IYKMwx7K8s", projectId: "sonic-verbena-239117" }); 
+        const db = getFirestore(app);
+
+        let deskData = [];
+        let activeConfig = {};
+
+        window.loginDesk = async () => {
+            const pin = document.getElementById('desk-pin').value.toUpperCase();
+            
+            if(pin === '10KM26') activeConfig = { filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
+            else if(pin === '5KM26') activeConfig = { filter: '5KM', db: 'edu_heart_run', color: 'purple', title: '5KM PACED DESK' };
+            else if(pin === '3KM26') activeConfig = { filter: '3KM', db: 'edu_heart_run', color: 'green', title: '3KM WALK DESK' };
+            else if(pin === 'CREW26') activeConfig = { filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'NAVY CREW DESK' };
+            else {
+                document.getElementById('login-error').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('login-modal').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('flex');
+            
+            document.getElementById('desk-nav').classList.add(`bg-${activeConfig.color}-900/40`, `border-${activeConfig.color}-500`);
+            document.getElementById('desk-title').innerText = activeConfig.title;
+            document.getElementById('desk-title').classList.add(`text-${activeConfig.color}-400`);
+            document.getElementById('search').classList.replace('focus:ring-white', `focus:ring-${activeConfig.color}-500`);
+
+            loadDeskData();
+        };
+
+        window.loadDeskData = async () => {
+            document.getElementById('grid').innerHTML = `<div class="col-span-full text-center py-10 font-bold tracking-widest text-${activeConfig.color}-400">SYNCING SECURE DATA...</div>`;
+            const snap = await getDocs(collection(db, activeConfig.db));
+            deskData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            
+            if(activeConfig.filter !== 'ALL') deskData = deskData.filter(r => r.category && r.category.includes(activeConfig.filter));
+            renderUI(deskData);
+        };
+
+        function renderUI(dataList) {
+            document.getElementById('count').innerText = deskData.filter(r => r.accredited).length;
+            const grid = document.getElementById('grid'); grid.innerHTML = '';
+            
+            if(dataList.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-slate-500 font-bold mt-8">NO MATCHES FOUND</div>'; return; }
+
+            dataList.forEach(r => {
+                const btn = r.accredited ? `<button disabled class="w-full mt-3 bg-slate-800 text-slate-500 py-3 rounded-lg font-black tracking-widest border border-slate-700">CLEARED <i class="fa-solid fa-check ml-1"></i></button>` : `<button onclick="checkIn('${r.id}')" id="b-${r.id}" class="w-full mt-3 bg-${activeConfig.color}-600 text-white py-3 rounded-lg font-black tracking-widest hover:bg-${activeConfig.color}-500 transition shadow-[0_0_15px_rgba(0,0,0,0.4)]">MARK PRESENT</button>`;
+                grid.innerHTML += `
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border-l-4 border-${activeConfig.color}-500 shadow-xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="font-black text-xl text-white uppercase">${r.title || ''} ${r.name}</h3>
+                                <p class="text-xs text-${activeConfig.color}-400 font-bold uppercase tracking-widest">${r.bibNumber ? 'RUNNER' : r.role}</p>
+                            </div>
+                            <span class="text-3xl font-black font-[Oswald] text-slate-600">${r.bibNumber ? '#'+r.bibNumber : ''}</span>
+                        </div>
+                        ${btn}
+                    </div>`;
+            });
+        }
+
+        window.filterRunners = () => {
+            const q = document.getElementById('search').value.toLowerCase();
+            renderUI(deskData.filter(r => r.name.toLowerCase().includes(q) || (r.bibNumber && r.bibNumber.includes(q))));
+        };
+
+        window.checkIn = async (id) => {
+            if(!confirm("Check this person into the event?")) return;
+            if (navigator.vibrate) navigator.vibrate(50);
+            document.getElementById(`b-${id}`).innerText = '...';
+            await updateDoc(doc(db, activeConfig.db, id), { accredited: true });
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            deskData.find(r => r.id === id).accredited = true;
+            renderUI(deskData);
+        };
+    </script>
+</body>
+</html>
