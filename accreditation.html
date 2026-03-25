@@ -59,11 +59,10 @@
         let deskData = [];
         let activeConfig = {};
 
-        // 🔥 BULLETPROOF LOGIN LOGIC
         window.loginDesk = async () => {
             const pinInput = document.getElementById('desk-pin');
             const errorMsg = document.getElementById('login-error');
-            const pin = pinInput.value.trim().toUpperCase(); // Removes invisible spaces
+            const pin = pinInput.value.trim().toUpperCase();
             
             if(pin === '10KM26') activeConfig = { filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
             else if(pin === '5KM26') activeConfig = { filter: '5KM', db: 'edu_heart_run', color: 'purple', title: '5KM PACED DESK' };
@@ -71,14 +70,14 @@
             else if(pin === 'CREW26') activeConfig = { filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'NAVY CREW DESK' };
             else {
                 errorMsg.classList.remove('hidden');
-                pinInput.value = ''; // clear for retry
+                pinInput.value = ''; 
                 return;
             }
 
             const modal = document.getElementById('login-modal');
-            modal.classList.remove('flex'); // Strips flex so hidden works
+            modal.classList.remove('flex');
             modal.classList.add('hidden');
-            modal.style.display = 'none'; // Hard overrides CSS
+            modal.style.display = 'none';
             
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('main-app').classList.add('flex');
@@ -91,7 +90,6 @@
             window.loadDeskData();
         };
 
-        // Allows hitting "Enter" key to login
         document.getElementById('desk-pin').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { window.loginDesk(); }
         });

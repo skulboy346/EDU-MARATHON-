@@ -173,26 +173,24 @@
             document.getElementById(tabId).classList.add('active'); document.getElementById(`btn-${tabId}`).classList.add('active');
         };
 
-        // 🔥 BULLETPROOF LOGIN LOGIC
         window.checkLogin = () => {
             const pinInput = document.getElementById('adm-pass');
             const errorMsg = document.getElementById('login-error');
-            const pin = pinInput.value.trim().toUpperCase(); // Removes invisible spaces
+            const pin = pinInput.value.trim().toUpperCase();
             
             if(pin === 'EDURUN26') {
                 const modal = document.getElementById('login-modal');
-                modal.classList.remove('flex'); // Strips flex so hidden works
+                modal.classList.remove('flex');
                 modal.classList.add('hidden');
-                modal.style.display = 'none'; // Hard overrides CSS
+                modal.style.display = 'none';
                 
                 window.fetchData(); fetchTimerSettings(); window.fetchSponsors();
             } else {
                 errorMsg.classList.remove('hidden');
-                pinInput.value = ''; // Clears box for retry
+                pinInput.value = '';
             }
         };
 
-        // Allows hitting "Enter" key to login
         document.getElementById('adm-pass').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { window.checkLogin(); }
         });
@@ -227,4 +225,10 @@
         };
 
         window.updateLiveTimer = async () => {
-            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date').value, status: document.getElementById('admin-status').value, timerType: document.getElementById('admin-timer-type'
+            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date').value, status: document.getElementById('admin-status').value, timerType: document.getElementById('admin-timer-type').value }, { merge: true });
+            alert("Live Timer Updated!");
+        };
+
+        window.fetchData = async () => {
+            try {
+                const snapRunners = await getDoc
