@@ -24,7 +24,7 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4 transition-all">
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4">
         <div class="bg-slate-900 p-8 max-w-sm w-full text-center rounded-2xl shadow-[0_0_40px_rgba(255,42,42,0.3)] border border-[#ff2a2a]">
             <i class="fa-solid fa-heart-pulse text-5xl neon-red mb-4"></i>
             <h2 class="text-3xl font-black text-white mb-1 tracking-wide">COMMAND CENTER</h2>
@@ -53,7 +53,6 @@
     </nav>
 
     <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full">
-
         <div id="dashboard" class="section active space-y-6">
             <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                 <h2 class="text-3xl font-black text-white tracking-wide">Live Overview</h2>
@@ -127,7 +126,6 @@
             <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                 <h2 class="text-3xl font-black text-white tracking-wide">Sponsors & Partners</h2>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 md:col-span-1 h-fit">
                     <h3 class="text-white font-black text-xl mb-4"><i class="fa-solid fa-plus text-[#ff2a2a] mr-2"></i> ADD NEW PARTNER</h3>
@@ -150,6 +148,41 @@
 
     </main>
 
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active'); 
+            document.getElementById(`btn-${tabId}`).classList.add('active');
+        }
+
+        function checkLogin() {
+            const pinInput = document.getElementById('adm-pass');
+            const errorMsg = document.getElementById('login-error');
+            const pin = pinInput.value.trim().toUpperCase(); // Instantly removes spaces
+            
+            if(pin === 'EDURUN26') {
+                const modal = document.getElementById('login-modal');
+                modal.style.display = 'none'; // Hard-hides the modal
+                
+                // Fire database syncing if loaded
+                if(typeof window.fetchData === 'function') window.fetchData();
+                if(typeof window.fetchTimerSettings === 'function') window.fetchTimerSettings();
+                if(typeof window.fetchSponsors === 'function') window.fetchSponsors();
+            } else {
+                errorMsg.classList.remove('hidden');
+                pinInput.value = '';
+            }
+        }
+
+        // Allow 'Enter' key
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('adm-pass').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { checkLogin(); }
+            });
+        });
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -167,35 +200,7 @@
 
         let allRunners = []; let allVolunteers = []; let gates = { runner: 'open', volunteer: 'open' };
 
-        window.switchTab = (tabId) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active'); document.getElementById(`btn-${tabId}`).classList.add('active');
-        };
-
-        window.checkLogin = () => {
-            const pinInput = document.getElementById('adm-pass');
-            const errorMsg = document.getElementById('login-error');
-            const pin = pinInput.value.trim().toUpperCase();
-            
-            if(pin === 'EDURUN26') {
-                const modal = document.getElementById('login-modal');
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-                modal.style.display = 'none';
-                
-                window.fetchData(); fetchTimerSettings(); window.fetchSponsors();
-            } else {
-                errorMsg.classList.remove('hidden');
-                pinInput.value = '';
-            }
-        };
-
-        document.getElementById('adm-pass').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { window.checkLogin(); }
-        });
-
-        async function fetchTimerSettings() {
+        window.fetchTimerSettings = async function() {
             try {
                 const snap = await getDoc(doc(db, "edu_heart_settings", "event_info"));
                 if(snap.exists()) {
@@ -208,7 +213,7 @@
                 }
                 updateGateUI();
             } catch(e) {}
-        }
+        };
 
         function updateGateUI() {
             const rBtn = document.getElementById('btn-gate-runner'); const vBtn = document.getElementById('btn-gate-volunteer');
@@ -225,10 +230,4 @@
         };
 
         window.updateLiveTimer = async () => {
-            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date').value, status: document.getElementById('admin-status').value, timerType: document.getElementById('admin-timer-type').value }, { merge: true });
-            alert("Live Timer Updated!");
-        };
-
-        window.fetchData = async () => {
-            try {
-                const snapRunners = await getDoc
+            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date

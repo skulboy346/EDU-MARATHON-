@@ -35,11 +35,43 @@
         </div>
         
         <div class="fixed bottom-6 right-6">
-            <button onclick="loadDeskData()" class="bg-slate-800 text-white p-4 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.8)] border border-slate-700 hover:bg-slate-700 transition flex items-center justify-center">
+            <button onclick="if(window.loadDeskData) window.loadDeskData()" class="bg-slate-800 text-white p-4 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.8)] border border-slate-700 hover:bg-slate-700 transition flex items-center justify-center">
                 <i class="fa-solid fa-rotate text-xl"></i>
             </button>
         </div>
     </div>
+
+    <script>
+        function loginDesk() {
+            const pinInput = document.getElementById('desk-pin');
+            const errorMsg = document.getElementById('login-error');
+            const pin = pinInput.value.trim().toUpperCase();
+            
+            // Check if it matches ANY desk
+            if(pin === '10KM26' || pin === '5KM26' || pin === '3KM26' || pin === 'CREW26') {
+                const modal = document.getElementById('login-modal');
+                modal.style.display = 'none'; // Instant override
+                
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('main-app').classList.add('flex');
+                
+                // Trigger the secure database config logic
+                if(typeof window.activateDesk === 'function') {
+                    window.activateDesk(pin);
+                }
+            } else {
+                errorMsg.classList.remove('hidden');
+                pinInput.value = ''; 
+            }
+        }
+
+        // Allow 'Enter' key
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('desk-pin').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') { loginDesk(); }
+            });
+        });
+    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -59,29 +91,13 @@
         let deskData = [];
         let activeConfig = {};
 
-        window.loginDesk = async () => {
-            const pinInput = document.getElementById('desk-pin');
-            const errorMsg = document.getElementById('login-error');
-            const pin = pinInput.value.trim().toUpperCase();
-            
+        // Activated by the UI script
+        window.activateDesk = async (pin) => {
             if(pin === '10KM26') activeConfig = { filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
             else if(pin === '5KM26') activeConfig = { filter: '5KM', db: 'edu_heart_run', color: 'purple', title: '5KM PACED DESK' };
             else if(pin === '3KM26') activeConfig = { filter: '3KM', db: 'edu_heart_run', color: 'green', title: '3KM WALK DESK' };
             else if(pin === 'CREW26') activeConfig = { filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'NAVY CREW DESK' };
-            else {
-                errorMsg.classList.remove('hidden');
-                pinInput.value = ''; 
-                return;
-            }
 
-            const modal = document.getElementById('login-modal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-            modal.style.display = 'none';
-            
-            document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('main-app').classList.add('flex');
-            
             document.getElementById('desk-nav').classList.add(`bg-${activeConfig.color}-900/40`, `border-${activeConfig.color}-500`);
             document.getElementById('desk-title').innerText = activeConfig.title;
             document.getElementById('desk-title').classList.add(`text-${activeConfig.color}-400`);
@@ -89,10 +105,6 @@
 
             window.loadDeskData();
         };
-
-        document.getElementById('desk-pin').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { window.loginDesk(); }
-        });
 
         window.loadDeskData = async () => {
             document.getElementById('grid').innerHTML = `<div class="col-span-full text-center py-10 font-bold tracking-widest text-${activeConfig.color}-400">SYNCING SECURE DATA...</div>`;
