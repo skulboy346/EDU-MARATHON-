@@ -174,10 +174,15 @@
         };
 
         window.checkLogin = () => {
-            if(document.getElementById('adm-pass').value.toUpperCase() === 'EDURUN26') {
+            // Trim added here to prevent space errors
+            const pin = document.getElementById('adm-pass').value.trim().toUpperCase();
+            
+            if(pin === 'EDURUN26') {
                 document.getElementById('login-modal').classList.add('hidden');
                 fetchData(); fetchTimerSettings(); fetchSponsors();
-            } else document.getElementById('login-error').classList.remove('hidden');
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
         };
 
         async function fetchTimerSettings() {
@@ -219,8 +224,4 @@
                 const snapRunners = await getDocs(query(collection(db, "edu_heart_run"), orderBy("bibNumber", "asc"))); allRunners = snapRunners.docs.map(d => ({ id: d.id, ...d.data() }));
                 const snapVol = await getDocs(collection(db, "edu_heart_volunteers")); allVolunteers = snapVol.docs.map(d => ({ id: d.id, ...d.data() }));
                 updateDashboard(); renderRunnersTable(); renderVolunteersTable();
-            } catch (e) { }
-        };
-
-        function updateDashboard() {
-            document.getElementById('stat-total').innerText = allRunners.length
+            } catch 
