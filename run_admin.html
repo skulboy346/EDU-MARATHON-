@@ -24,7 +24,7 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4">
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4 transition-all">
         <div class="bg-slate-900 p-8 max-w-sm w-full text-center rounded-2xl shadow-[0_0_40px_rgba(255,42,42,0.3)] border border-[#ff2a2a]">
             <i class="fa-solid fa-heart-pulse text-5xl neon-red mb-4"></i>
             <h2 class="text-3xl font-black text-white mb-1 tracking-wide">COMMAND CENTER</h2>
@@ -173,17 +173,29 @@
             document.getElementById(tabId).classList.add('active'); document.getElementById(`btn-${tabId}`).classList.add('active');
         };
 
+        // 🔥 BULLETPROOF LOGIN LOGIC
         window.checkLogin = () => {
-            // Trim added here to prevent space errors
-            const pin = document.getElementById('adm-pass').value.trim().toUpperCase();
+            const pinInput = document.getElementById('adm-pass');
+            const errorMsg = document.getElementById('login-error');
+            const pin = pinInput.value.trim().toUpperCase(); // Removes invisible spaces
             
             if(pin === 'EDURUN26') {
-                document.getElementById('login-modal').classList.add('hidden');
-                fetchData(); fetchTimerSettings(); fetchSponsors();
+                const modal = document.getElementById('login-modal');
+                modal.classList.remove('flex'); // Strips flex so hidden works
+                modal.classList.add('hidden');
+                modal.style.display = 'none'; // Hard overrides CSS
+                
+                window.fetchData(); fetchTimerSettings(); window.fetchSponsors();
             } else {
-                document.getElementById('login-error').classList.remove('hidden');
+                errorMsg.classList.remove('hidden');
+                pinInput.value = ''; // Clears box for retry
             }
         };
+
+        // Allows hitting "Enter" key to login
+        document.getElementById('adm-pass').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { window.checkLogin(); }
+        });
 
         async function fetchTimerSettings() {
             try {
@@ -215,13 +227,4 @@
         };
 
         window.updateLiveTimer = async () => {
-            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date').value, status: document.getElementById('admin-status').value, timerType: document.getElementById('admin-timer-type').value }, { merge: true });
-            alert("Live Timer Updated!");
-        };
-
-        window.fetchData = async () => {
-            try {
-                const snapRunners = await getDocs(query(collection(db, "edu_heart_run"), orderBy("bibNumber", "asc"))); allRunners = snapRunners.docs.map(d => ({ id: d.id, ...d.data() }));
-                const snapVol = await getDocs(collection(db, "edu_heart_volunteers")); allVolunteers = snapVol.docs.map(d => ({ id: d.id, ...d.data() }));
-                updateDashboard(); renderRunnersTable(); renderVolunteersTable();
-            } catch 
+            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date').value, status: document.getElementById('admin-status').value, timerType: document.getElementById('admin-timer-type'

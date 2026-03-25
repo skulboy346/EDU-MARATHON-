@@ -10,7 +10,7 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900 p-4">
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900 p-4 transition-all">
         <div class="bg-slate-800 p-8 max-w-sm w-full text-center rounded-xl border border-slate-700 shadow-2xl">
             <i class="fa-solid fa-qrcode text-5xl text-white mb-4"></i>
             <h2 class="text-2xl font-black text-white mb-2">ACCREDITATION</h2>
@@ -59,20 +59,27 @@
         let deskData = [];
         let activeConfig = {};
 
+        // 🔥 BULLETPROOF LOGIN LOGIC
         window.loginDesk = async () => {
-            // Trim added here to prevent space errors
-            const pin = document.getElementById('desk-pin').value.trim().toUpperCase();
+            const pinInput = document.getElementById('desk-pin');
+            const errorMsg = document.getElementById('login-error');
+            const pin = pinInput.value.trim().toUpperCase(); // Removes invisible spaces
             
             if(pin === '10KM26') activeConfig = { filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
             else if(pin === '5KM26') activeConfig = { filter: '5KM', db: 'edu_heart_run', color: 'purple', title: '5KM PACED DESK' };
             else if(pin === '3KM26') activeConfig = { filter: '3KM', db: 'edu_heart_run', color: 'green', title: '3KM WALK DESK' };
             else if(pin === 'CREW26') activeConfig = { filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'NAVY CREW DESK' };
             else {
-                document.getElementById('login-error').classList.remove('hidden');
+                errorMsg.classList.remove('hidden');
+                pinInput.value = ''; // clear for retry
                 return;
             }
 
-            document.getElementById('login-modal').classList.add('hidden');
+            const modal = document.getElementById('login-modal');
+            modal.classList.remove('flex'); // Strips flex so hidden works
+            modal.classList.add('hidden');
+            modal.style.display = 'none'; // Hard overrides CSS
+            
             document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('main-app').classList.add('flex');
             
@@ -81,8 +88,13 @@
             document.getElementById('desk-title').classList.add(`text-${activeConfig.color}-400`);
             document.getElementById('search').classList.replace('focus:ring-white', `focus:ring-${activeConfig.color}-500`);
 
-            loadDeskData();
+            window.loadDeskData();
         };
+
+        // Allows hitting "Enter" key to login
+        document.getElementById('desk-pin').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { window.loginDesk(); }
+        });
 
         window.loadDeskData = async () => {
             document.getElementById('grid').innerHTML = `<div class="col-span-full text-center py-10 font-bold tracking-widest text-${activeConfig.color}-400">SYNCING SECURE DATA...</div>`;
