@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Crew | EDU-HEART-RUN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript"> (function() { emailjs.init("lBBi498Z8dJYiXcJR"); })(); </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; } 
+        h1, h2, h3 { font-family: 'Oswald', sans-serif; text-transform: uppercase; }
+        .hero-bg { background-image: linear-gradient(rgba(15, 23, 42, 0.90), rgba(15, 23, 42, 0.98)), url('https://images.unsplash.com/photo-1552674605-15c3705e97ce?q=80&w=1200'); background-size: cover; background-position: center; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <nav class="bg-slate-900 border-b border-slate-800 shadow-2xl sticky top-0 z-40 p-4 flex justify-between items-center">
+        <span class="text-2xl font-black text-white tracking-tighter">EDU-<span class="text-blue-500">CREW</span></span>
+        <a href="index.html" class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-widest transition"><i class="fa-solid fa-person-running mr-1"></i> Register to Run</a>
+    </nav>
+
+    <header class="hero-bg py-20 px-4 text-center">
+        <span class="border border-blue-500 text-blue-500 text-xs font-black px-4 py-1.5 rounded-full tracking-[0.2em] bg-blue-900/20">JOIN THE SQUAD</span>
+        <h1 class="text-4xl md:text-6xl font-black mt-6 mb-2 text-white">OFFICIAL <span class="text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]">EVENT CREW</span></h1>
+        
+        <div class="inline-flex items-center gap-4 bg-slate-800/80 border border-slate-700 backdrop-blur-md px-6 py-3 rounded-lg mt-6 mb-10">
+            <div class="flex items-center gap-2"><i class="fa-solid fa-clock text-blue-500"></i><span class="font-bold text-sm tracking-widest text-blue-500" id="live-date-text">ANTICIPATION STAGE - TBD</span></div>
+        </div>
+        
+        <div class="flex justify-center gap-3 md:gap-6 text-center mb-8">
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="days" class="text-4xl md:text-6xl font-black text-blue-500">-</div><div class="text-xs uppercase font-bold mt-2 text-slate-400">Days</div></div>
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="hours" class="text-4xl md:text-6xl font-black text-white">-</div><div class="text-xs uppercase font-bold mt-2 text-slate-400">Hours</div></div>
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="minutes" class="text-4xl md:text-6xl font-black text-white">-</div><div class="text-xs uppercase font-bold mt-2 text-slate-400">Mins</div></div>
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-xl w-20 md:w-28"><div id="seconds" class="text-4xl md:text-6xl font-black text-blue-500">-</div><div class="text-xs uppercase font-bold mt-2 text-slate-400">Secs</div></div>
+        </div>
+    </header>
+
+    <section id="sponsors-top" class="py-12 px-4 max-w-6xl mx-auto w-full hidden">
+        <p class="text-center text-slate-500 text-sm font-bold uppercase tracking-widest mb-8">Official Event Partners</p>
+        <div id="official-logos" class="flex flex-wrap justify-center items-center gap-8 md:gap-16"></div>
+    </section>
+
+    <main class="flex-grow flex items-center justify-center p-4 -mt-10 z-20 pb-12 relative">
+        <div class="max-w-3xl w-full bg-slate-900 shadow-[0_0_40px_rgba(0,0,0,0.8)] border border-slate-700 rounded-2xl overflow-hidden relative">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-800 via-blue-500 to-cyan-400"></div>
+            
+            <div class="p-8">
+                <div id="closedSection" class="hidden text-center py-10">
+                    <i class="fa-solid fa-lock text-6xl text-blue-500 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"></i>
+                    <h2 class="text-3xl font-black text-white mb-3 tracking-wide uppercase">CREW ROSTER FULL</h2>
+                    <p class="text-slate-400 font-semibold max-w-md mx-auto">Volunteer registration is now officially closed. Thank you for your interest in supporting the marathon!</p>
+                </div>
+
+                <form id="volunteerForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Full Name</label><input type="text" id="vName" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"></div>
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">WhatsApp</label><input type="tel" id="vPhone" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Email Address</label><input type="email" id="vEmail" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"></div>
+                        <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Faculty</label><select id="vFacultySelect" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5 mb-2"><option value="">Select...</option><option value="EDUCATION">EDUCATION</option><option value="FASA">FASA</option><option value="CASA">CASA</option><option value="MSA">MSA</option><option value="FSS">FSS</option><option value="Others">Others</option></select><input type="text" id="vFacultyOther" placeholder="Enter Faculty" class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 uppercase hidden"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Unit</label><select id="vRole" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5"><option value="Protocol">Protocol</option><option value="Logistics">Logistics</option><option value="Medical">Medical</option><option value="Media">Media</option><option value="Technical Official">Technical Official</option></select></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Shirt Size</label><select id="vShirt" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5"><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select></div>
+                    </div>
+                    <button type="submit" id="btnSubmit" class="w-full bg-blue-600 text-white font-black text-xl py-4 rounded-xl hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)]">CONFIRM REGISTRATION</button>
+                </form>
+
+                <div id="successSection" class="hidden text-center py-6">
+                    <h2 class="text-3xl font-black text-white mb-6">WELCOME TO THE CREW!</h2>
+                    <div id="digitalBadge" class="relative bg-slate-900 border-2 border-blue-600 p-0 w-64 mx-auto rounded-xl shadow-[0_0_40px_rgba(37,99,235,0.5)] overflow-hidden mb-8 flex flex-col mt-6">
+                        <div class="bg-slate-900 w-full flex justify-center pt-3 pb-2 border-b border-slate-800"><div class="w-12 h-3 border-2 border-slate-700 rounded-full bg-slate-800"></div></div>
+                        <div class="bg-gradient-to-r from-blue-900 via-blue-600 to-blue-400 text-center py-3"><h3 class="font-black text-xl text-white uppercase">OFFICIAL CREW</h3></div>
+                        <div class="p-6 text-center">
+                            <p class="text-2xl font-black text-white uppercase" id="badgeName">NAME</p>
+                            <div class="bg-blue-600 text-white py-1.5 px-4 rounded w-full border border-blue-500 mt-4"><p class="text-[11px] font-black uppercase tracking-widest" id="badgeRole">ROLE</p></div>
+                        </div>
+                    </div>
+                    <button onclick="downloadBadge()" class="bg-white text-slate-900 font-black py-4 px-10 rounded-full w-full mb-4">DOWNLOAD VIP PASS</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="sponsors-bottom" class="py-12 px-4 max-w-6xl mx-auto w-full hidden border-t border-slate-800 mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-center">
+            <div id="sup-wrap" class="hidden"><p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Supporting Partners</p><div id="supporting-logos" class="flex flex-wrap justify-center items-center gap-6"></div></div>
+            <div id="hyd-wrap" class="hidden"><p class="text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">Hydration Partners</p><div id="hydration-logos" class="flex flex-wrap justify-center items-center gap-6"></div></div>
+        </div>
+    </section>
+
+    <footer class="bg-black text-white py-8 text-center mt-auto border-t border-slate-800">
+        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">© 2026 NUESA Sports Committee | EDU-HEART-RUN</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDoc, getDocs, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
+            authDomain: "edu-marathon-26.firebaseapp.com",
+            projectId: "edu-marathon-26",
+            storageBucket: "edu-marathon-26.firebasestorage.app",
+            messagingSenderId: "424659083241",
+            appId: "1:424659083241:web:856902379e142ac4177578"
+        };
+        const app = initializeApp(firebaseConfig); 
+        const db = getFirestore(app);
+
+        async function loadSponsors() {
+            try {
+                const snap = await getDocs(collection(db, "edu_heart_sponsors"));
+                if(snap.empty) return;
+                let off='', sup='', hyd='';
+                snap.forEach(d => {
+                    const s = d.data();
+                    const img = `<img src="${s.logo}" alt="${s.name}" class="h-12 md:h-16 object-contain bg-white/5 rounded-lg p-2 hover:bg-white/10 transition">`;
+                    if(s.category === 'Official') off += img; else if(s.category === 'Supporting') sup += img; else if(s.category === 'Hydration') hyd += img;
+                });
+                if(off) { document.getElementById('official-logos').innerHTML = off; document.getElementById('sponsors-top').classList.remove('hidden'); }
+                if(sup || hyd) document.getElementById('sponsors-bottom').classList.remove('hidden');
+                if(sup) { document.getElementById('supporting-logos').innerHTML = sup; document.getElementById('sup-wrap').classList.remove('hidden'); }
+                if(hyd) { document.getElementById('hydration-logos').innerHTML = hyd; document.getElementById('hyd-wrap').classList.remove('hidden'); }
+            } catch(e) {}
+        }
+        loadSponsors();
+
+        async function loadSettings() {
+            try {
+                const snap = await getDoc(doc(db, "edu_heart_settings", "event_info"));
+                if(snap.exists()) {
+                    const data = snap.data();
+                    if(data.volunteerGate === 'closed') { document.getElementById('volunteerForm').classList.add('hidden'); document.getElementById('closedSection').classList.remove('hidden'); }
+                    if(data.status === 'active') {
+                        const targetTime = new Date(data.targetDate).getTime();
+                        const timerType = data.timerType || 'event';
+                        const prefix = timerType === 'registration' ? 'CREW REG CLOSES: ' : 'RACE DAY: ';
+                        document.getElementById("live-date-text").innerText = prefix + new Date(data.targetDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+                        
+                        setInterval(() => {
+                            const d = targetTime - new Date().getTime();
+                            if(d < 0) {
+                                document.getElementById("days").innerHTML = "00"; document.getElementById("hours").innerHTML = "00"; document.getElementById("minutes").innerHTML = "00"; document.getElementById("seconds").innerHTML = "00";
+                                if(timerType === 'registration') { document.getElementById('volunteerForm').classList.add('hidden'); document.getElementById('closedSection').classList.remove('hidden'); }
+                                return;
+                            }
+                            document.getElementById("days").innerHTML = Math.floor(d/(1000*60*60*24)).toString().padStart(2, '0');
+                            document.getElementById("hours").innerHTML = Math.floor((d%(1000*60*60*24))/(1000*60*60)).toString().padStart(2, '0');
+                            document.getElementById("minutes").innerHTML = Math.floor((d%(1000*60*60))/(1000*60)).toString().padStart(2, '0');
+                            document.getElementById("seconds").innerHTML = Math.floor((d%(1000*60))/1000).toString().padStart(2, '0');
+                        }, 1000);
+                    }
+                }
+            } catch(e) {}
+        }
+        loadSettings();
+
+        const groupLinks = { "General": "https://chat.whatsapp.com/CT7fZZozpsv5Ep2tjE9UHH?mode=gi_t", "Protocol": "https://chat.whatsapp.com/F75Q66Z2i8JAYhrSOgQCf9?mode=gi_t", "Logistics": "https://chat.whatsapp.com/CBKDAUaUeeS4o6u69TjRRw?mode=gi_t", "Medical": "https://chat.whatsapp.com/I7qEJZtbsyd0aQZELAhxwj?mode=gi_t", "Media": "https://chat.whatsapp.com/FCilMyfvye88qPTRRQL9kS?mode=gi_t", "Technical Official": "https://chat.whatsapp.com/FDsGOBQhyYs35zOoQzrDzt?mode=gi_t" };
+
+        document.getElementById('vFacultySelect').addEventListener('change', (e) => {
+            const fOther = document.getElementById('vFacultyOther');
+            if(e.target.value === 'Others') { fOther.classList.remove('hidden'); fOther.required = true; } else { fOther.classList.add('hidden'); fOther.required = false; }
+        });
+
+        document.getElementById('volunteerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit'); btn.disabled = true; btn.innerHTML = 'PROCESSING...';
+            const role = document.getElementById('vRole').value; const name = document.getElementById('vName').value; const email = document.getElementById('vEmail').value;
+            const faculty = document.getElementById('vFacultySelect').value === 'Others' ? document.getElementById('vFacultyOther').value.toUpperCase() : document.getElementById('vFacultySelect').value;
+            
+            try {
+                await addDoc(collection(db, "edu_heart_volunteers"), { name, email, phone: document.getElementById('vPhone').value, faculty, role, shirtSize: document.getElementById('vShirt').value, accredited: false, registeredAt: serverTimestamp() });
+                document.getElementById('badgeName').innerText = name.split(' ')[0].toUpperCase(); document.getElementById('badgeRole').innerText = role.toUpperCase();
+                try { emailjs.send("service_1x7fybd", "EDU-VOLUNTEER", { to_name: name.split(' ')[0], to_email: email, role: role, general_link: groupLinks["General"], unit_link: groupLinks[role] }); } catch(e){}
+                document.getElementById('volunteerForm').classList.add('hidden'); document.getElementById('successSection').classList.remove('hidden');
+            } catch(e) { alert("Error"); btn.disabled = false; }
+        });
+
+        window.downloadBadge = async () => { const canvas = await html2canvas(document.getElementById('digitalBadge'), { scale: 3, backgroundColor: "#0f172a" }); const link = document.createElement('a'); link.download = `VOLUNTEER_PASS.png`; link.href = canvas.toDataURL('image/png'); link.click(); };
+    </script>
+</body>
+</html>
