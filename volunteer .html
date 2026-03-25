@@ -81,7 +81,7 @@
                         <div class="bg-gradient-to-r from-blue-900 via-blue-600 to-blue-400 text-center py-3"><h3 class="font-black text-xl text-white uppercase">OFFICIAL CREW</h3></div>
                         <div class="p-6 text-center">
                             <p class="text-2xl font-black text-white uppercase" id="badgeName">NAME</p>
-                            <div class="bg-blue-600 text-white py-1.5 px-4 rounded w-full border border-blue-500 mt-4"><p class="text-[11px] font-black uppercase tracking-widest truncate" id="badgeRole">ROLE</p></div>
+                            <div class="bg-blue-600 text-white py-1.5 px-4 rounded w-full border border-blue-500 mt-4"><p class="text-[11px] font-black uppercase tracking-widest" id="badgeRole">ROLE</p></div>
                         </div>
                     </div>
                     <button onclick="downloadBadge()" class="bg-white text-slate-900 font-black py-4 px-10 rounded-full w-full mb-4">DOWNLOAD VIP PASS</button>
@@ -105,7 +105,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDoc, getDocs, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const app = initializeApp({ apiKey: "AIzaSyDtxFsLYoe0NYlZRWiXgEM90IYKMwx7K8s", projectId: "sonic-verbena-239117" }); 
+        const firebaseConfig = {
+            apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
+            authDomain: "edu-marathon-26.firebaseapp.com",
+            projectId: "edu-marathon-26",
+            storageBucket: "edu-marathon-26.firebasestorage.app",
+            messagingSenderId: "424659083241",
+            appId: "1:424659083241:web:856902379e142ac4177578"
+        };
+        const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
         async function loadSponsors() {

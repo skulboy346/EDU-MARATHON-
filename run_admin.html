@@ -154,7 +154,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const app = initializeApp({ apiKey: "AIzaSyDtxFsLYoe0NYlZRWiXgEM90IYKMwx7K8s", projectId: "sonic-verbena-239117" }); 
+        const firebaseConfig = {
+            apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
+            authDomain: "edu-marathon-26.firebaseapp.com",
+            projectId: "edu-marathon-26",
+            storageBucket: "edu-marathon-26.firebasestorage.app",
+            messagingSenderId: "424659083241",
+            appId: "1:424659083241:web:856902379e142ac4177578"
+        };
+        const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
         let allRunners = []; let allVolunteers = []; let gates = { runner: 'open', volunteer: 'open' };
@@ -198,7 +206,7 @@
         window.toggleGate = async (type) => {
             if(!confirm(`Change ${type} registration status?`)) return;
             const newState = gates[type] === 'open' ? 'closed' : 'open'; gates[type] = newState; updateGateUI();
-            try { await setDoc(doc(db, "edu_heart_settings", "event_info"), { [`${type}Gate`]: newState }, { merge: true }); } catch(e) { }
+            try { await setDoc(doc(db, "edu_heart_settings", "event_info"), { [`${type}Gate`]: newState }, { merge: true }); } catch(e) {}
         };
 
         window.updateLiveTimer = async () => {
@@ -215,7 +223,4 @@
         };
 
         function updateDashboard() {
-            document.getElementById('stat-total').innerText = allRunners.length;
-            document.getElementById('stat-10k').innerText = allRunners.filter(r => r.category && r.category.includes("10KM")).length;
-            document.getElementById('stat-5k').innerText = allRunners.filter(r => r.category && r.category.includes("5KM")).length;
-            document.getElementById('stat
+            document.getElementById('stat-total').innerText = allRunners.length
