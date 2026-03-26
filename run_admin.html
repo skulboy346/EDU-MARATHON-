@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marathon Command Center | EDU-HEART-RUN</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path fill=%22%23ff2a2a%22 d=%22M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z%22/></svg>">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -24,7 +26,7 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4">
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur p-4 transition-all">
         <div class="bg-slate-900 p-8 max-w-sm w-full text-center rounded-2xl shadow-[0_0_40px_rgba(255,42,42,0.3)] border border-[#ff2a2a]">
             <i class="fa-solid fa-heart-pulse text-5xl neon-red mb-4"></i>
             <h2 class="text-3xl font-black text-white mb-1 tracking-wide">COMMAND CENTER</h2>
@@ -225,9 +227,4 @@
 
         window.toggleGate = async (type) => {
             if(!confirm(`Change ${type} registration status?`)) return;
-            const newState = gates[type] === 'open' ? 'closed' : 'open'; gates[type] = newState; updateGateUI();
-            try { await setDoc(doc(db, "edu_heart_settings", "event_info"), { [`${type}Gate`]: newState }, { merge: true }); } catch(e) {}
-        };
-
-        window.updateLiveTimer = async () => {
-            await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: document.getElementById('admin-date
+            const newState = gates[type] === 
