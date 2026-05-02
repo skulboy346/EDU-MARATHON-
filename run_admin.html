@@ -17,8 +17,6 @@
         .nav-btn { padding: 10px 16px; font-weight: 700; color: #94a3b8; border-bottom: 3px solid transparent; transition: 0.2s; }
         .nav-btn.active { color: #ff2a2a; border-bottom-color: #ff2a2a; background: rgba(255, 42, 42, 0.1); }
         .section { display: none; } .section.active { display: block; }
-        .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
@@ -48,7 +46,7 @@
             <div class="flex gap-2 overflow-x-auto w-full md:w-auto no-scrollbar pb-1 md:pb-0">
                 <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active whitespace-nowrap">DASHBOARD</button>
                 <button onclick="switchTab('runners')" id="btn-runners" class="nav-btn whitespace-nowrap">RUNNERS</button>
-                <button onclick="switchTab('volunteers')" id="btn-volunteers" class="nav-btn whitespace-nowrap">VOLUNTEERS</button>
+                <button onclick="switchTab('volunteers')" id="btn-volunteers" class="nav-btn whitespace-nowrap">CREW</button>
                 <button onclick="switchTab('sponsors')" id="btn-sponsors" class="nav-btn whitespace-nowrap">SPONSORS</button>
             </div>
         </div>
@@ -58,7 +56,7 @@
         <div id="dashboard" class="section active space-y-6">
             <div class="flex justify-between items-center border-b border-slate-800 pb-4">
                 <h2 class="text-3xl font-black text-white tracking-wide">Live Overview</h2>
-                <button onclick="fetchData()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2"><i class="fa-solid fa-rotate-right"></i> REFRESH</button>
+                <button onclick="if(window.fetchData) window.fetchData()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-700 border border-slate-700 transition flex items-center gap-2"><i class="fa-solid fa-rotate-right"></i> REFRESH</button>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -88,10 +86,9 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Total Runners</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-total">0</h3></div>
                 <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-orange-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">10KM Endurance</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-10k">0</h3></div>
-                <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-purple-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">5KM Paced</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-5k">0</h3></div>
                 <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-green-500 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">3KM Walk</p><h3 class="text-4xl font-black mt-2 text-white" id="stat-3k">0</h3></div>
                 <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-emerald-400 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Checked-In</p><h3 class="text-4xl font-black mt-2 text-emerald-400" id="stat-present">0</h3></div>
                 <div class="bg-slate-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-400 relative overflow-hidden"><p class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Total Crew</p><h3 class="text-4xl font-black mt-2 text-blue-400" id="stat-crew">0</h3><i class="fa-solid fa-headset absolute -bottom-2 -right-2 text-5xl text-blue-900 opacity-20"></i></div>
@@ -101,7 +98,7 @@
         <div id="runners" class="section space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
                 <h2 class="text-3xl font-black text-white tracking-wide">Runner Database</h2>
-                <button onclick="downloadCSV('runners')" class="w-full md:w-auto bg-green-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-green-500 transition shadow-[0_0_15px_rgba(34,197,94,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT RUNNERS</button>
+                <button onclick="window.downloadCSV('runners')" class="w-full md:w-auto bg-green-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-green-500 transition shadow-[0_0_15px_rgba(34,197,94,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT RUNNERS</button>
             </div>
             <div class="bg-slate-800 shadow-2xl rounded-xl overflow-x-auto border border-slate-700">
                 <table class="w-full text-left text-sm whitespace-nowrap">
@@ -113,13 +110,13 @@
 
         <div id="volunteers" class="section space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
-                <h2 class="text-3xl font-black text-white tracking-wide">Volunteer Crew</h2>
-                <button onclick="downloadCSV('volunteers')" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-blue-500 transition shadow-[0_0_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT CREW</button>
+                <h2 class="text-3xl font-black text-white tracking-wide">Crew Database</h2>
+                <button onclick="window.downloadCSV('volunteers')" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-blue-500 transition shadow-[0_0_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT CREW</button>
             </div>
             <div class="bg-slate-800 shadow-2xl rounded-xl overflow-x-auto border border-slate-700">
                 <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-slate-900 text-xs text-slate-400 uppercase font-bold tracking-wider border-b border-slate-700"><tr><th class="p-4 pl-6">Crew Member</th><th class="p-4">Unit / Role</th><th class="p-4">Faculty</th><th class="p-4">Shirt Size</th><th class="p-4 pr-6">Health Status</th></tr></thead>
-                    <tbody id="volunteers-tbody" class="divide-y divide-slate-700/50 text-slate-300"><tr><td colspan="5" class="p-8 text-center text-slate-500 font-bold uppercase tracking-widest">Loading...</td></tr></tbody>
+                    <thead class="bg-slate-900 text-xs text-slate-400 uppercase font-bold tracking-wider border-b border-slate-700"><tr><th class="p-4 pl-6">Crew Member</th><th class="p-4">Unit / Role</th><th class="p-4">Faculty</th><th class="p-4 pr-6">Status</th></tr></thead>
+                    <tbody id="volunteers-tbody" class="divide-y divide-slate-700/50 text-slate-300"><tr><td colspan="4" class="p-8 text-center text-slate-500 font-bold uppercase tracking-widest">Loading...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -147,7 +144,6 @@
                 </div>
             </div>
         </div>
-
     </main>
 
     <script>
@@ -161,13 +157,11 @@
         function checkLogin() {
             const pinInput = document.getElementById('adm-pass');
             const errorMsg = document.getElementById('login-error');
-            const pin = pinInput.value.trim().toUpperCase(); // Instantly removes spaces
+            const pin = pinInput.value.trim().toUpperCase();
             
             if(pin === 'EDURUN26') {
                 const modal = document.getElementById('login-modal');
-                modal.style.display = 'none'; // Hard-hides the modal
-                
-                // Fire database syncing if loaded
+                modal.style.display = 'none';
                 if(typeof window.fetchData === 'function') window.fetchData();
                 if(typeof window.fetchTimerSettings === 'function') window.fetchTimerSettings();
                 if(typeof window.fetchSponsors === 'function') window.fetchSponsors();
@@ -177,7 +171,6 @@
             }
         }
 
-        // Allow 'Enter' key
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('adm-pass').addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') { checkLogin(); }
@@ -187,7 +180,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
@@ -217,6 +210,16 @@
             } catch(e) {}
         };
 
+        window.updateLiveTimer = async () => {
+            const tDate = document.getElementById('admin-date').value;
+            const tStatus = document.getElementById('admin-status').value;
+            const tType = document.getElementById('admin-timer-type').value;
+            try {
+                await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: tDate, status: tStatus, timerType: tType }, { merge: true });
+                alert("Timer successfully updated!");
+            } catch(e) { alert("Update failed."); }
+        };
+
         function updateGateUI() {
             const rBtn = document.getElementById('btn-gate-runner'); const vBtn = document.getElementById('btn-gate-volunteer');
             if(gates.runner === 'open') { rBtn.className = "bg-green-900/30 border-2 border-green-500 text-green-400 font-black py-4 rounded-lg flex flex-col items-center justify-center gap-1 shadow-[0_0_15px_rgba(34,197,94,0.2)]"; rBtn.innerHTML = '<i class="fa-solid fa-unlock text-2xl"></i> RUNNERS: OPEN'; } 
@@ -227,4 +230,129 @@
 
         window.toggleGate = async (type) => {
             if(!confirm(`Change ${type} registration status?`)) return;
-            const newState = gates[type] === 
+            const newState = gates[type] === 'open' ? 'closed' : 'open';
+            gates[type] = newState;
+            updateGateUI();
+            await setDoc(doc(db, "edu_heart_settings", "event_info"), { [`${type}Gate`]: newState }, { merge: true });
+        };
+
+        window.fetchData = async () => {
+            try {
+                const rSnap = await getDocs(collection(db, "edu_heart_run"));
+                allRunners = rSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                const vSnap = await getDocs(collection(db, "edu_heart_volunteers"));
+                allVolunteers = vSnap.docs.map(d => ({id: d.id, ...d.data()}));
+
+                document.getElementById('stat-total').innerText = allRunners.length;
+                document.getElementById('stat-10k').innerText = allRunners.filter(r=>r.category && r.category.includes('10KM')).length;
+                document.getElementById('stat-3k').innerText = allRunners.filter(r=>r.category && r.category.includes('3KM')).length;
+                document.getElementById('stat-present').innerText = allRunners.filter(r=>r.accredited).length;
+                document.getElementById('stat-crew').innerText = allVolunteers.length;
+
+                renderRunners();
+                renderVolunteers();
+            } catch(e) { console.error(e); }
+        };
+
+        function renderRunners() {
+            const tbody = document.getElementById('runners-tbody');
+            tbody.innerHTML = '';
+            if(!allRunners.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center font-bold">NO RUNNERS FOUND</td></tr>'; return; }
+            
+            allRunners.forEach(r => {
+                const stat = r.accredited ? '<span class="text-green-500 font-bold tracking-widest"><i class="fa-solid fa-check mr-1"></i>CLEARED</span>' : '<span class="text-slate-500 font-bold tracking-widest">PENDING</span>';
+                const catColor = r.category && r.category.includes('10KM') ? 'text-orange-500 border-orange-500/50' : 'text-green-500 border-green-500/50';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-4 pl-6 font-black text-white text-lg">#${r.bibNumber||'---'}</td>
+                        <td class="p-4"><div class="font-bold text-white uppercase">${r.name}</div><div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-envelope mr-1"></i>${r.email} <br><i class="fa-brands fa-whatsapp mr-1 mt-1"></i>${r.phone}</div></td>
+                        <td class="p-4 uppercase font-bold text-slate-300">${r.status}<br><span class="text-xs text-blue-400 font-bold">AGE: ${r.age}</span></td>
+                        <td class="p-4"><span class="bg-slate-900 px-3 py-1.5 rounded text-[10px] font-black uppercase border ${catColor}">${r.category}</span></td>
+                        <td class="p-4 text-xs font-bold text-slate-400 uppercase">${r.faculty}</td>
+                        <td class="p-4 text-xs font-bold text-white uppercase">${r.healthStatus}</td>
+                        <td class="p-4 pr-6">${stat}</td>
+                    </tr>`;
+            });
+        }
+
+        function renderVolunteers() {
+            const tbody = document.getElementById('volunteers-tbody');
+            tbody.innerHTML = '';
+            if(!allVolunteers.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center font-bold">NO CREW FOUND</td></tr>'; return; }
+            
+            allVolunteers.forEach(v => {
+                const stat = v.accredited ? '<span class="text-blue-500 font-bold tracking-widest"><i class="fa-solid fa-check mr-1"></i>CLEARED</span>' : '<span class="text-slate-500 font-bold tracking-widest">PENDING</span>';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-4 pl-6"><div class="font-bold text-white uppercase">${v.name}</div><div class="text-xs text-slate-400 mt-1">${v.email} <br>${v.phone}</div></td>
+                        <td class="p-4 uppercase font-bold text-blue-400">${v.role}</td>
+                        <td class="p-4 text-xs font-bold text-slate-400 uppercase">${v.faculty}</td>
+                        <td class="p-4 pr-6">${stat}</td>
+                    </tr>`;
+            });
+        }
+
+        window.downloadCSV = (type) => {
+            const data = type === 'runners' ? allRunners : allVolunteers;
+            if(!data.length) return;
+            
+            const headers = Object.keys(data[0]).filter(k => k !== 'registeredAt' && k !== 'id').join(',');
+            const rows = data.map(obj => {
+                return Object.keys(obj).filter(k => k !== 'registeredAt' && k !== 'id').map(k => {
+                    let val = obj[k] || '';
+                    if(typeof val === 'string') val = val.replace(/"/g, '""');
+                    return `"${val}"`;
+                }).join(',');
+            }).join('\n');
+            
+            const csv = headers + '\n' + rows;
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `EDU_HEART_${type.toUpperCase()}_EXPORT.csv`;
+            link.click();
+        };
+
+        // Sponsor Logic
+        window.fetchSponsors = async () => {
+            try {
+                const snap = await getDocs(collection(db, "edu_heart_sponsors"));
+                const container = document.getElementById('sponsors-list');
+                container.innerHTML = '';
+                snap.forEach(d => {
+                    const sp = d.data();
+                    container.innerHTML += `
+                        <div class="bg-slate-900 border border-slate-700 rounded-lg p-4 text-center">
+                            <h4 class="text-white text-xs font-bold uppercase mb-2 truncate">${sp.name}</h4>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase block mb-3 border-b border-slate-800 pb-2">${sp.category}</span>
+                            <button onclick="window.deleteSponsor('${d.id}')" class="text-xs bg-red-900/30 text-red-500 font-bold py-1.5 px-4 rounded border border-red-900/50 w-full hover:bg-red-900/50 transition">REMOVE</button>
+                        </div>`;
+                });
+            } catch(e){}
+        };
+
+        document.getElementById('sponsorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSponsor'); btn.innerText = "PROCESSING..."; btn.disabled = true;
+            try {
+                // Simplified sponsor logic assuming you'll wire up storage if needed later, using base64 for quickness or standard file path
+                const name = document.getElementById('spName').value;
+                const cat = document.getElementById('spCategory').value;
+                await addDoc(collection(db, "edu_heart_sponsors"), { name: name, category: cat, logo: 'https://via.placeholder.com/150' }); // Placeholder logic to prevent storage config errors
+                document.getElementById('sponsorForm').reset();
+                await fetchSponsors();
+            } catch(err) {}
+            btn.innerText = "UPLOAD SPONSOR"; btn.disabled = false;
+        });
+
+        window.deleteSponsor = async (id) => {
+            if(!confirm(`Remove sponsor?`)) return;
+            await deleteDoc(doc(db, "edu_heart_sponsors", id));
+            await fetchSponsors();
+        };
+    </script>
+</body>
+</html>

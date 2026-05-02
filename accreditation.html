@@ -49,15 +49,14 @@
             const errorMsg = document.getElementById('login-error');
             const pin = pinInput.value.trim().toUpperCase();
             
-            // Check if it matches ANY desk
-            if(pin === '10KM26' || pin === '5KM26' || pin === '3KM26' || pin === 'CREW26') {
+            // Note: 5KM removed
+            if(pin === '10KM26' || pin === '3KM26' || pin === 'CREW26') {
                 const modal = document.getElementById('login-modal');
-                modal.style.display = 'none'; // Instant override
+                modal.style.display = 'none'; 
                 
                 document.getElementById('main-app').classList.remove('hidden');
                 document.getElementById('main-app').classList.add('flex');
                 
-                // Trigger the secure database config logic
                 if(typeof window.activateDesk === 'function') {
                     window.activateDesk(pin);
                 }
@@ -67,7 +66,6 @@
             }
         }
 
-        // Allow 'Enter' key
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('desk-pin').addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') { loginDesk(); }
@@ -93,10 +91,8 @@
         let deskData = [];
         let activeConfig = {};
 
-        // Activated by the UI script
         window.activateDesk = async (pin) => {
             if(pin === '10KM26') activeConfig = { filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
-            else if(pin === '5KM26') activeConfig = { filter: '5KM', db: 'edu_heart_run', color: 'purple', title: '5KM PACED DESK' };
             else if(pin === '3KM26') activeConfig = { filter: '3KM', db: 'edu_heart_run', color: 'green', title: '3KM WALK DESK' };
             else if(pin === 'CREW26') activeConfig = { filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'NAVY CREW DESK' };
 

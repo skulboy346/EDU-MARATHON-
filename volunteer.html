@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volunteer Crew | EDU-HEART-RUN</title>
+    <title>NUESA SPORTS FESTIVAL CREW</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path fill=%22%23ff2a2a%22 d=%22M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z%22/></svg>">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,9 +39,9 @@
 
     <nav class="bg-slate-900 border-b border-slate-800 shadow-2xl sticky top-0 z-40 p-4 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <i class="fa-solid fa-heart-pulse text-blue-500 text-3xl animate-heartbeat"></i>
+            <i class="fa-solid fa-crown text-blue-500 text-3xl animate-heartbeat"></i>
             <div class="leading-none">
-                <span class="text-2xl font-black text-white tracking-tighter block">EDU-<span class="text-blue-500">CREW</span></span>
+                <span class="text-2xl font-black text-white tracking-tighter block">NUESA FESTIVAL <span class="text-blue-500">CREW</span></span>
             </div>
         </div>
         <a href="index.html" class="text-xs font-bold text-slate-400 hover:text-white uppercase tracking-widest transition"><i class="fa-solid fa-person-running mr-1"></i> Register to Run</a>
@@ -49,7 +49,7 @@
 
     <header class="hero-bg py-20 px-4 text-center">
         <span class="border border-blue-500 text-blue-500 text-xs font-black px-4 py-1.5 rounded-full tracking-[0.2em] bg-blue-900/20">JOIN THE SQUAD</span>
-        <h1 class="text-4xl md:text-6xl font-black mt-6 mb-2 text-white">OFFICIAL <span class="text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]">EVENT CREW</span></h1>
+        <h1 class="text-4xl md:text-6xl font-black mt-6 mb-2 text-white">NUESA SPORTS <span class="text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]">FESTIVAL CREW</span></h1>
         
         <div class="inline-flex items-center gap-4 bg-slate-800/80 border border-slate-700 backdrop-blur-md px-6 py-3 rounded-lg mt-6 mb-10">
             <div class="flex items-center gap-2"><i class="fa-solid fa-clock text-blue-500"></i><span class="font-bold text-sm tracking-widest text-blue-500" id="live-date-text">ANTICIPATION STAGE - TBD</span></div>
@@ -76,7 +76,7 @@
                 <div id="closedSection" class="hidden text-center py-10">
                     <i class="fa-solid fa-lock text-6xl text-blue-500 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"></i>
                     <h2 class="text-3xl font-black text-white mb-3 tracking-wide uppercase">CREW ROSTER FULL</h2>
-                    <p class="text-slate-400 font-semibold max-w-md mx-auto">Volunteer registration is now officially closed. Thank you for your interest in supporting the marathon!</p>
+                    <p class="text-slate-400 font-semibold max-w-md mx-auto">Volunteer registration is now officially closed. Thank you for your interest in supporting the festival!</p>
                 </div>
 
                 <form id="volunteerForm" class="space-y-6">
@@ -90,10 +90,17 @@
                         <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Faculty</label><select id="vFacultySelect" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5 mb-2"><option value="">Select...</option><option value="EDUCATION">EDUCATION</option><option value="FASA">FASA</option><option value="CASA">CASA</option><option value="MSA">MSA</option><option value="FSS">FSS</option><option value="Others">Others</option></select><input type="text" id="vFacultyOther" placeholder="Enter Faculty" class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 uppercase hidden"></div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-800/50 p-5 rounded-xl border border-slate-700">
-                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Unit</label><select id="vRole" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5"><option value="Protocol">Protocol</option><option value="Logistics">Logistics</option><option value="Medical">Medical</option><option value="Media">Media</option><option value="Technical Official">Technical Official</option></select></div>
-                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Shirt Size</label><select id="vShirt" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5"><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select></div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-700">
+                        <label class="block text-xs font-bold text-slate-300 uppercase mb-2">Volunteer Unit / Role</label>
+                        <select id="vRole" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5">
+                            <option value="Protocol">Protocol</option>
+                            <option value="Logistics">Logistics</option>
+                            <option value="Medical">Medical</option>
+                            <option value="Media">Media</option>
+                            <option value="Technical Official">Technical Official</option>
+                        </select>
                     </div>
+                    
                     <button type="submit" id="btnSubmit" class="w-full bg-blue-600 text-white font-black text-xl py-4 rounded-xl hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.4)]">CONFIRM REGISTRATION</button>
                 </form>
 
@@ -113,15 +120,8 @@
         </div>
     </main>
 
-    <section id="sponsors-bottom" class="py-12 px-4 max-w-6xl mx-auto w-full hidden border-t border-slate-800 mt-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-center">
-            <div id="sup-wrap" class="hidden"><p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">Supporting Partners</p><div id="supporting-logos" class="flex flex-wrap justify-center items-center gap-6"></div></div>
-            <div id="hyd-wrap" class="hidden"><p class="text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">Hydration Partners</p><div id="hydration-logos" class="flex flex-wrap justify-center items-center gap-6"></div></div>
-        </div>
-    </section>
-
     <footer class="bg-black text-white py-8 text-center mt-auto border-t border-slate-800">
-        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">© 2026 NUESA Sports Committee | EDU-HEART-RUN</p>
+        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">© 2026 NUESA Sports Committee</p>
     </footer>
 
     <script type="module">
@@ -139,24 +139,6 @@
         const app = initializeApp(firebaseConfig); 
         const db = getFirestore(app);
 
-        async function loadSponsors() {
-            try {
-                const snap = await getDocs(collection(db, "edu_heart_sponsors"));
-                if(snap.empty) return;
-                let off='', sup='', hyd='';
-                snap.forEach(d => {
-                    const s = d.data();
-                    const img = `<img src="${s.logo}" alt="${s.name}" class="h-12 md:h-16 object-contain bg-white/5 rounded-lg p-2 hover:bg-white/10 transition">`;
-                    if(s.category === 'Official') off += img; else if(s.category === 'Supporting') sup += img; else if(s.category === 'Hydration') hyd += img;
-                });
-                if(off) { document.getElementById('official-logos').innerHTML = off; document.getElementById('sponsors-top').classList.remove('hidden'); }
-                if(sup || hyd) document.getElementById('sponsors-bottom').classList.remove('hidden');
-                if(sup) { document.getElementById('supporting-logos').innerHTML = sup; document.getElementById('sup-wrap').classList.remove('hidden'); }
-                if(hyd) { document.getElementById('hydration-logos').innerHTML = hyd; document.getElementById('hyd-wrap').classList.remove('hidden'); }
-            } catch(e) {}
-        }
-        loadSponsors();
-
         async function loadSettings() {
             try {
                 const snap = await getDoc(doc(db, "edu_heart_settings", "event_info"));
@@ -166,7 +148,7 @@
                     if(data.status === 'active') {
                         const targetTime = new Date(data.targetDate).getTime();
                         const timerType = data.timerType || 'event';
-                        const prefix = timerType === 'registration' ? 'CREW REG CLOSES: ' : 'RACE DAY: ';
+                        const prefix = timerType === 'registration' ? 'CREW REG CLOSES: ' : 'EVENT DAY: ';
                         document.getElementById("live-date-text").innerText = prefix + new Date(data.targetDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
                         
                         setInterval(() => {
@@ -201,9 +183,15 @@
             const faculty = document.getElementById('vFacultySelect').value === 'Others' ? document.getElementById('vFacultyOther').value.toUpperCase() : document.getElementById('vFacultySelect').value;
             
             try {
-                await addDoc(collection(db, "edu_heart_volunteers"), { name, email, phone: document.getElementById('vPhone').value, faculty, role, shirtSize: document.getElementById('vShirt').value, accredited: false, registeredAt: serverTimestamp() });
+                await addDoc(collection(db, "edu_heart_volunteers"), { 
+                    name, email, phone: document.getElementById('vPhone').value, 
+                    faculty, role, accredited: false, registeredAt: serverTimestamp() 
+                });
+                
                 document.getElementById('badgeName').innerText = name.split(' ')[0].toUpperCase(); document.getElementById('badgeRole').innerText = role.toUpperCase();
+                
                 try { emailjs.send("service_1x7fybd", "EDU-VOLUNTEER", { to_name: name.split(' ')[0], to_email: email, role: role, general_link: groupLinks["General"], unit_link: groupLinks[role] }); } catch(e){}
+                
                 document.getElementById('volunteerForm').classList.add('hidden'); document.getElementById('successSection').classList.remove('hidden');
             } catch(e) { alert("Error"); btn.disabled = false; }
         });

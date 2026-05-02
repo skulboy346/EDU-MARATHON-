@@ -105,7 +105,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-slate-800/50 rounded-xl border border-slate-700">
                         <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Age (Min: 16)</label><input type="number" id="mAge" min="1" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 font-black text-center text-xl"><p id="ageWarning" class="text-xs text-[#ff2a2a] font-bold mt-2 hidden">Must be 16+</p></div>
-                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Category</label><select id="mCategory" required disabled class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 opacity-50"><option value="">Enter Age First...</option></select></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Category</label><select id="mCategory" required disabled class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 opacity-50"><option value="">Fill Details First...</option></select></div>
                     </div>
 
                     <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Medical Status</label><select id="mHealth" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Asthmatic">Asthmatic</option><option value="Other">Other</option></select></div>
@@ -208,17 +208,43 @@
         }
         loadSettings();
 
+        function updateCategoryLogic() {
+            const status = document.getElementById('mStatus').value;
+            const age = parseInt(document.getElementById('mAge').value);
+            const cat = document.getElementById('mCategory');
+
+            if(!status || isNaN(age)) {
+                cat.innerHTML = '<option value="">Fill Details First...</option>';
+                cat.disabled = true; cat.classList.add('opacity-50');
+                document.getElementById('ageWarning').classList.add('hidden');
+                return;
+            }
+
+            if(age < 16) {
+                cat.innerHTML = '<option value="">Too Young (16+ Only)</option>';
+                cat.disabled = true; cat.classList.add('opacity-50');
+                document.getElementById('ageWarning').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('ageWarning').classList.add('hidden');
+            }
+
+            cat.disabled = false; cat.classList.remove('opacity-50');
+            
+            if (status === 'Staff') {
+                cat.innerHTML = '<option value="10KM Run">10KM Run (Orange Desk)</option><option value="3KM Fitness Walk">3KM Walk (Green Desk)</option>';
+            } else {
+                cat.innerHTML = '<option value="10KM Run">10KM Run (Orange Desk)</option>';
+            }
+        }
+
+        document.getElementById('mAge').addEventListener('input', updateCategoryLogic);
+
         document.getElementById('mStatus').addEventListener('change', (e) => {
             const t = document.getElementById('mTitle');
             if(e.target.value === 'Student') { t.innerHTML='<option value="Mr.">Mr.</option><option value="Miss">Miss</option><option value="Mrs.">Mrs.</option>'; t.disabled=false; t.classList.remove('opacity-50'); }
             else if(e.target.value === 'Staff') { t.innerHTML='<option value="Prof.">Prof.</option><option value="Dr.">Dr.</option><option value="Mr.">Mr.</option><option value="Mrs.">Mrs.</option>'; t.disabled=false; t.classList.remove('opacity-50'); }
-        });
-
-        document.getElementById('mAge').addEventListener('input', (e) => {
-            const age = parseInt(e.target.value); const cat = document.getElementById('mCategory');
-            if(age < 16) { cat.innerHTML='<option>Too Young</option>'; cat.disabled=true; }
-            else if(age <= 44) { cat.innerHTML='<option value="10KM Run">10KM Run (Orange Desk)</option><option value="5KM Run">5KM Run (Purple Desk)</option>'; cat.disabled=false; cat.classList.remove('opacity-50'); }
-            else { cat.innerHTML='<option value="5KM Run">5KM Run (Purple Desk)</option><option value="3KM Fitness Walk">3KM Walk (Green Desk)</option>'; cat.disabled=false; cat.classList.remove('opacity-50'); }
+            updateCategoryLogic();
         });
 
         document.getElementById('mFacultySelect').addEventListener('change', (e) => {
@@ -245,9 +271,18 @@
                 });
 
                 const bibHeader = document.getElementById('bibHeader'); const digitalBib = document.getElementById('digitalBib'); const bibCatText = document.getElementById('bibCategory'); const bibLogoHeart = document.getElementById('bibLogoHeart');
-                if(category.includes("10KM")) { bibHeader.className = "absolute top-0 left-0 w-full h-4 bg-orange-500"; digitalBib.className = "relative bg-slate-900 border-2 border-orange-500 p-6 max-w-sm mx-auto rounded-xl shadow-[0_0_40px_rgba(249,115,22,0.4)] overflow-hidden mb-8 mt-6"; bibCatText.className = "text-[11px] text-orange-500 font-bold uppercase mt-1 tracking-widest"; bibLogoHeart.className = "text-orange-500"; } 
-                else if(category.includes("5KM")) { bibHeader.className = "absolute top-0 left-0 w-full h-4 bg-purple-500"; digitalBib.className = "relative bg-slate-900 border-2 border-purple-500 p-6 max-w-sm mx-auto rounded-xl shadow-[0_0_40px_rgba(168,85,247,0.4)] overflow-hidden mb-8 mt-6"; bibCatText.className = "text-[11px] text-purple-500 font-bold uppercase mt-1 tracking-widest"; bibLogoHeart.className = "text-purple-500"; } 
-                else { bibHeader.className = "absolute top-0 left-0 w-full h-4 bg-green-500"; digitalBib.className = "relative bg-slate-900 border-2 border-green-500 p-6 max-w-sm mx-auto rounded-xl shadow-[0_0_40px_rgba(34,197,94,0.4)] overflow-hidden mb-8 mt-6"; bibCatText.className = "text-[11px] text-green-500 font-bold uppercase mt-1 tracking-widest"; bibLogoHeart.className = "text-green-500"; }
+                
+                if(category.includes("10KM")) { 
+                    bibHeader.className = "absolute top-0 left-0 w-full h-4 bg-orange-500"; 
+                    digitalBib.className = "relative bg-slate-900 border-2 border-orange-500 p-6 max-w-sm mx-auto rounded-xl shadow-[0_0_40px_rgba(249,115,22,0.4)] overflow-hidden mb-8 mt-6"; 
+                    bibCatText.className = "text-[11px] text-orange-500 font-bold uppercase mt-1 tracking-widest"; 
+                    bibLogoHeart.className = "text-orange-500"; 
+                } else { 
+                    bibHeader.className = "absolute top-0 left-0 w-full h-4 bg-green-500"; 
+                    digitalBib.className = "relative bg-slate-900 border-2 border-green-500 p-6 max-w-sm mx-auto rounded-xl shadow-[0_0_40px_rgba(34,197,94,0.4)] overflow-hidden mb-8 mt-6"; 
+                    bibCatText.className = "text-[11px] text-green-500 font-bold uppercase mt-1 tracking-widest"; 
+                    bibLogoHeart.className = "text-green-500"; 
+                }
 
                 document.getElementById('bibName').innerText = name.split(' ')[0].toUpperCase(); document.getElementById('bibCategory').innerText = category.toUpperCase(); document.getElementById('bibNumber').innerText = formattedBib;
 
