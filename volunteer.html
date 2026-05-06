@@ -126,7 +126,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDoc, getDocs, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDoc, getDocs, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
@@ -183,17 +183,22 @@
             const faculty = document.getElementById('vFacultySelect').value === 'Others' ? document.getElementById('vFacultyOther').value.toUpperCase() : document.getElementById('vFacultySelect').value;
             
             try {
-                await addDoc(collection(db, "edu_heart_volunteers"), { 
+                // Capture the docRef to tag it if email succeeds
+                const docRef = await addDoc(collection(db, "edu_heart_volunteers"), { 
                     name, email, phone: document.getElementById('vPhone').value, 
                     faculty, role, accredited: false, registeredAt: serverTimestamp() 
                 });
                 
                 document.getElementById('badgeName').innerText = name.split(' ')[0].toUpperCase(); document.getElementById('badgeRole').innerText = role.toUpperCase();
                 
-                try { emailjs.send("service_1x7fybd", "EDU-VOLUNTEER", { to_name: name.split(' ')[0], to_email: email, role: role, general_link: groupLinks["General"], unit_link: groupLinks[role] }); } catch(e){}
+                // Fire Email and Tag Success
+                try { 
+                    await emailjs.send("service_1x7fybd", "EDU-VOLUNTEER", { to_name: name.split(' ')[0], to_email: email, role: role, general_link: groupLinks["General"], unit_link: groupLinks[role] }); 
+                    await updateDoc(doc(db, "edu_heart_volunteers", docRef.id), { emailSent: true });
+                } catch(err) { console.error("Auto email failed", err); }
                 
                 document.getElementById('volunteerForm').classList.add('hidden'); document.getElementById('successSection').classList.remove('hidden');
-            } catch(e) { alert("Error"); btn.disabled = false; }
+            } catch(e) { alert("Registration Error. Please try again."); btn.disabled = false; btn.innerHTML = 'CONFIRM REGISTRATION'; }
         });
 
         window.downloadBadge = async () => { const canvas = await html2canvas(document.getElementById('digitalBadge'), { scale: 3, backgroundColor: "#0f172a" }); const link = document.createElement('a'); link.download = `VOLUNTEER_PASS.png`; link.href = canvas.toDataURL('image/png'); link.click(); };

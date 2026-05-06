@@ -104,8 +104,8 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-slate-800/50 rounded-xl border border-slate-700">
-                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Age</label><input type="number" id="mAge" min="16" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 font-black text-center text-xl"></div>
-                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Category</label><select id="mCategory" required disabled class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 opacity-50"><option value="">Select Status First...</option></select></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Age (Min: 16)</label><input type="number" id="mAge" min="1" required class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 font-black text-center text-xl"><p id="ageWarning" class="text-xs text-[#ff2a2a] font-bold mt-2 hidden">Must be 16+</p></div>
+                        <div><label class="block text-xs font-bold text-slate-300 uppercase mb-2">Category</label><select id="mCategory" required disabled class="w-full bg-slate-900 border border-slate-600 text-white rounded-lg p-3.5 opacity-50"><option value="">Fill Details First...</option></select></div>
                     </div>
 
                     <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2">Medical Status</label><select id="mHealth" required class="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3.5"><option value="Excellent">Excellent</option><option value="Good">Good</option><option value="Asthmatic">Asthmatic</option><option value="Other">Other</option></select></div>
@@ -147,7 +147,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
@@ -208,15 +208,25 @@
         }
         loadSettings();
 
-        // UPDATED DYNAMIC CATEGORY LOGIC
         function updateCategoryLogic() {
             const status = document.getElementById('mStatus').value;
+            const age = parseInt(document.getElementById('mAge').value);
             const cat = document.getElementById('mCategory');
 
-            if(!status) {
-                cat.innerHTML = '<option value="">Select Status First...</option>';
+            if(!status || isNaN(age)) {
+                cat.innerHTML = '<option value="">Fill Details First...</option>';
                 cat.disabled = true; cat.classList.add('opacity-50');
+                document.getElementById('ageWarning').classList.add('hidden');
                 return;
+            }
+
+            if(age < 16) {
+                cat.innerHTML = '<option value="">Too Young (16+ Only)</option>';
+                cat.disabled = true; cat.classList.add('opacity-50');
+                document.getElementById('ageWarning').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('ageWarning').classList.add('hidden');
             }
 
             cat.disabled = false; cat.classList.remove('opacity-50');
@@ -227,6 +237,8 @@
                 cat.innerHTML = '<option value="10KM Run">10KM Run (Orange Desk)</option>';
             }
         }
+
+        document.getElementById('mAge').addEventListener('input', updateCategoryLogic);
 
         document.getElementById('mStatus').addEventListener('change', (e) => {
             const t = document.getElementById('mTitle');
@@ -251,7 +263,8 @@
                 const snap = await getDocs(collection(db, "edu_heart_run"));
                 const formattedBib = (snap.size + 1).toString().padStart(3, '0');
 
-                await addDoc(collection(db, "edu_heart_run"), {
+                // Capture the docRef to tag it if email succeeds
+                const docRef = await addDoc(collection(db, "edu_heart_run"), {
                     status: document.getElementById('mStatus').value, title: document.getElementById('mTitle').value,
                     name, phone: document.getElementById('mPhone').value, email, faculty, age: document.getElementById('mAge').value,
                     category, healthStatus: document.getElementById('mHealth').value,
@@ -274,10 +287,14 @@
 
                 document.getElementById('bibName').innerText = name.split(' ')[0].toUpperCase(); document.getElementById('bibCategory').innerText = category.toUpperCase(); document.getElementById('bibNumber').innerText = formattedBib;
 
-                try { emailjs.send("service_1x7fybd", "EDU-HEART-RUN", { to_name: name, to_email: email, bib_number: formattedBib, category: category }); } catch(err) {}
+                // Fire Email and Tag Success
+                try { 
+                    await emailjs.send("service_1x7fybd", "EDU-HEART-RUN", { to_name: name, to_email: email, bib_number: formattedBib, category: category }); 
+                    await updateDoc(doc(db, "edu_heart_run", docRef.id), { emailSent: true });
+                } catch(err) { console.error("Auto email failed", err); }
 
                 document.getElementById('marathonForm').classList.add('hidden'); document.getElementById('successSection').classList.remove('hidden');
-            } catch (error) { alert("Error"); btn.disabled = false; }
+            } catch (error) { alert("Registration Error. Please try again."); btn.disabled = false; btn.innerHTML = 'CONFIRM REGISTRATION'; }
         });
 
         window.downloadBib = async () => {

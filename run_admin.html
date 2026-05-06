@@ -8,6 +8,11 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- EmailJS setup for Resending Emails -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript"> (function() { emailjs.init("lBBi498Z8dJYiXcJR"); })(); </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
@@ -73,7 +78,7 @@
                             <option value="registration">Timer Target: Registration Closing Deadline</option>
                         </select>
                     </div>
-                    <button onclick="updateLiveTimer()" class="w-full mt-3 bg-blue-600 text-white px-4 py-3 rounded-lg font-black tracking-widest hover:bg-blue-500 transition">UPDATE TIMER</button>
+                    <button onclick="window.updateLiveTimer(this)" class="w-full mt-3 bg-blue-600 text-white px-4 py-3 rounded-lg font-black tracking-widest hover:bg-blue-500 transition shadow-[0_0_15px_rgba(37,99,235,0.3)]">UPDATE TIMER</button>
                 </div>
 
                 <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-xl">
@@ -110,13 +115,13 @@
 
         <div id="volunteers" class="section space-y-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-4 gap-4">
-                <h2 class="text-3xl font-black text-white tracking-wide">Crew Database</h2>
+                <h2 class="text-3xl font-black text-white tracking-wide">Crew Attendance Log</h2>
                 <button onclick="window.downloadCSV('volunteers')" class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg text-xs font-black tracking-widest hover:bg-blue-500 transition shadow-[0_0_15px_rgba(37,99,235,0.3)] flex items-center justify-center gap-2"><i class="fa-solid fa-file-csv text-lg"></i> EXPORT CREW</button>
             </div>
             <div class="bg-slate-800 shadow-2xl rounded-xl overflow-x-auto border border-slate-700">
                 <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-slate-900 text-xs text-slate-400 uppercase font-bold tracking-wider border-b border-slate-700"><tr><th class="p-4 pl-6">Crew Member</th><th class="p-4">Unit / Role</th><th class="p-4">Faculty</th><th class="p-4 pr-6">Status</th></tr></thead>
-                    <tbody id="volunteers-tbody" class="divide-y divide-slate-700/50 text-slate-300"><tr><td colspan="4" class="p-8 text-center text-slate-500 font-bold uppercase tracking-widest">Loading...</td></tr></tbody>
+                    <thead class="bg-slate-900 text-xs text-slate-400 uppercase font-bold tracking-wider border-b border-slate-700"><tr><th class="p-4 pl-6">Crew Member</th><th class="p-4">Unit / Role</th><th class="p-4">Faculty</th><th class="p-4">Days Present</th><th class="p-4 pr-6">Daily Status</th></tr></thead>
+                    <tbody id="volunteers-tbody" class="divide-y divide-slate-700/50 text-slate-300"><tr><td colspan="5" class="p-8 text-center text-slate-500 font-bold uppercase tracking-widest">Loading...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -180,7 +185,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyATsVP-HTdN77pDg8Qlv8wMGnQoWTIboRU",
@@ -210,14 +215,32 @@
             } catch(e) {}
         };
 
-        window.updateLiveTimer = async () => {
+        window.updateLiveTimer = async (btn) => {
             const tDate = document.getElementById('admin-date').value;
             const tStatus = document.getElementById('admin-status').value;
             const tType = document.getElementById('admin-timer-type').value;
+
+            if (!tDate) { alert("⚠️ Please select a date and time from the calendar first!"); return; }
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> SYNCING...';
+            btn.disabled = true;
+
             try {
-                await setDoc(doc(db, "edu_heart_settings", "event_info"), { targetDate: tDate, status: tStatus, timerType: tType }, { merge: true });
-                alert("Timer successfully updated!");
-            } catch(e) { alert("Update failed."); }
+                await setDoc(doc(db, "edu_heart_settings", "event_info"), { 
+                    targetDate: tDate, 
+                    status: tStatus, 
+                    timerType: tType 
+                }, { merge: true });
+                
+                alert("✅ Timer successfully updated and synced to all pages!");
+            } catch(error) {
+                console.error("Firebase Error:", error);
+                alert("❌ UPDATE FAILED: " + error.message + "\n\n(This usually means your Firestore Rules are not in Test Mode.)");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         };
 
         function updateGateUI() {
@@ -255,19 +278,28 @@
             } catch(e) { console.error(e); }
         };
 
+        // RENDER RUNNERS WITH RESEND EMAIL LOGIC
         function renderRunners() {
             const tbody = document.getElementById('runners-tbody');
             tbody.innerHTML = '';
             if(!allRunners.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center font-bold">NO RUNNERS FOUND</td></tr>'; return; }
             
-            allRunners.forEach(r => {
+            allRunners.forEach((r, index) => {
                 const stat = r.accredited ? '<span class="text-green-500 font-bold tracking-widest"><i class="fa-solid fa-check mr-1"></i>CLEARED</span>' : '<span class="text-slate-500 font-bold tracking-widest">PENDING</span>';
                 const catColor = r.category && r.category.includes('10KM') ? 'text-orange-500 border-orange-500/50' : 'text-green-500 border-green-500/50';
+                
+                const emailBtn = r.emailSent 
+                    ? `<div class="mt-2 text-[9px] bg-green-900/30 text-green-500 px-2 py-1 rounded border border-green-900/50 uppercase font-bold tracking-widest inline-block"><i class="fa-solid fa-check-double mr-1"></i>Sent</div>`
+                    : `<button onclick="window.resendEmail('runner', ${index}, this)" class="mt-2 text-[9px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded border border-blue-900/50 hover:bg-blue-600 hover:text-white transition uppercase font-bold tracking-widest"><i class="fa-solid fa-paper-plane mr-1"></i>Resend Email</button>`;
                 
                 tbody.innerHTML += `
                     <tr>
                         <td class="p-4 pl-6 font-black text-white text-lg">#${r.bibNumber||'---'}</td>
-                        <td class="p-4"><div class="font-bold text-white uppercase">${r.name}</div><div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-envelope mr-1"></i>${r.email} <br><i class="fa-brands fa-whatsapp mr-1 mt-1"></i>${r.phone}</div></td>
+                        <td class="p-4">
+                            <div class="font-bold text-white uppercase">${r.name}</div>
+                            <div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-envelope mr-1"></i>${r.email} <br><i class="fa-brands fa-whatsapp mr-1 mt-1"></i>${r.phone}</div>
+                            ${emailBtn}
+                        </td>
                         <td class="p-4 uppercase font-bold text-slate-300">${r.status}<br><span class="text-xs text-blue-400 font-bold">AGE: ${r.age}</span></td>
                         <td class="p-4"><span class="bg-slate-900 px-3 py-1.5 rounded text-[10px] font-black uppercase border ${catColor}">${r.category}</span></td>
                         <td class="p-4 text-xs font-bold text-slate-400 uppercase">${r.faculty}</td>
@@ -277,23 +309,85 @@
             });
         }
 
+        // RENDER CREW WITH RESEND EMAIL LOGIC
         function renderVolunteers() {
             const tbody = document.getElementById('volunteers-tbody');
             tbody.innerHTML = '';
-            if(!allVolunteers.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center font-bold">NO CREW FOUND</td></tr>'; return; }
+            if(!allVolunteers.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center font-bold">NO CREW FOUND</td></tr>'; return; }
             
-            allVolunteers.forEach(v => {
-                const stat = v.accredited ? '<span class="text-blue-500 font-bold tracking-widest"><i class="fa-solid fa-check mr-1"></i>CLEARED</span>' : '<span class="text-slate-500 font-bold tracking-widest">PENDING</span>';
+            const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            allVolunteers.forEach((v, index) => {
+                const daysCount = v.attendance ? v.attendance.length : 0;
+                const attendanceLog = daysCount > 0 ? v.attendance.join(', ') : 'No attendance logged';
                 
+                const isPresentToday = v.attendance && v.attendance.includes(today);
+                const stat = isPresentToday 
+                    ? '<span class="text-green-500 font-bold tracking-widest"><i class="fa-solid fa-check mr-1"></i>ACTIVE TODAY</span>' 
+                    : '<span class="text-slate-500 font-bold tracking-widest">OFF DUTY</span>';
+                
+                const emailBtn = v.emailSent 
+                    ? `<div class="mt-2 text-[9px] bg-green-900/30 text-green-500 px-2 py-1 rounded border border-green-900/50 uppercase font-bold tracking-widest inline-block"><i class="fa-solid fa-check-double mr-1"></i>Sent</div>`
+                    : `<button onclick="window.resendEmail('crew', ${index}, this)" class="mt-2 text-[9px] bg-blue-900/30 text-blue-400 px-2 py-1 rounded border border-blue-900/50 hover:bg-blue-600 hover:text-white transition uppercase font-bold tracking-widest"><i class="fa-solid fa-paper-plane mr-1"></i>Resend Email</button>`;
+
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-4 pl-6"><div class="font-bold text-white uppercase">${v.name}</div><div class="text-xs text-slate-400 mt-1">${v.email} <br>${v.phone}</div></td>
+                        <td class="p-4 pl-6">
+                            <div class="font-bold text-white uppercase">${v.name}</div>
+                            <div class="text-xs text-slate-400 mt-1">${v.email} <br>${v.phone}</div>
+                            ${emailBtn}
+                        </td>
                         <td class="p-4 uppercase font-bold text-blue-400">${v.role}</td>
                         <td class="p-4 text-xs font-bold text-slate-400 uppercase">${v.faculty}</td>
+                        <td class="p-4">
+                            <span class="bg-blue-900/50 text-blue-400 border border-blue-800 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest">${daysCount} Days</span> 
+                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">${attendanceLog}</div>
+                        </td>
                         <td class="p-4 pr-6">${stat}</td>
                     </tr>`;
             });
         }
+
+        // RESEND EMAIL LOGIC
+        window.resendEmail = async (type, index, btn) => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> SENDING...';
+            btn.disabled = true;
+
+            try {
+                if(type === 'runner') {
+                    const r = allRunners[index];
+                    await emailjs.send("service_1x7fybd", "EDU-HEART-RUN", { 
+                        to_name: r.name, 
+                        to_email: r.email, 
+                        bib_number: r.bibNumber, 
+                        category: r.category 
+                    });
+                    await updateDoc(doc(db, "edu_heart_run", r.id), { emailSent: true });
+                } else {
+                    const v = allVolunteers[index];
+                    const groupLinks = { "General": "https://chat.whatsapp.com/CT7fZZozpsv5Ep2tjE9UHH?mode=gi_t", "Protocol": "https://chat.whatsapp.com/F75Q66Z2i8JAYhrSOgQCf9?mode=gi_t", "Logistics": "https://chat.whatsapp.com/CBKDAUaUeeS4o6u69TjRRw?mode=gi_t", "Medical": "https://chat.whatsapp.com/I7qEJZtbsyd0aQZELAhxwj?mode=gi_t", "Media": "https://chat.whatsapp.com/FCilMyfvye88qPTRRQL9kS?mode=gi_t", "Technical Official": "https://chat.whatsapp.com/FDsGOBQhyYs35zOoQzrDzt?mode=gi_t" };
+                    
+                    await emailjs.send("service_1x7fybd", "EDU-VOLUNTEER", { 
+                        to_name: v.name.split(' ')[0], 
+                        to_email: v.email, 
+                        role: v.role, 
+                        general_link: groupLinks["General"], 
+                        unit_link: groupLinks[v.role] 
+                    });
+                    await updateDoc(doc(db, "edu_heart_volunteers", v.id), { emailSent: true });
+                }
+                
+                // Immediately refresh data to show the green checkmark
+                window.fetchData();
+                
+            } catch (e) {
+                console.error(e);
+                alert("Failed to send email. You may have hit your EmailJS daily limit.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
 
         window.downloadCSV = (type) => {
             const data = type === 'runners' ? allRunners : allVolunteers;
@@ -302,7 +396,9 @@
             const headers = Object.keys(data[0]).filter(k => k !== 'registeredAt' && k !== 'id').join(',');
             const rows = data.map(obj => {
                 return Object.keys(obj).filter(k => k !== 'registeredAt' && k !== 'id').map(k => {
-                    let val = obj[k] || '';
+                    let val = obj[k];
+                    if(Array.isArray(val)) val = val.join(' | '); // Convert attendance array to string
+                    if(val === undefined || val === null) val = '';
                     if(typeof val === 'string') val = val.replace(/"/g, '""');
                     return `"${val}"`;
                 }).join(',');
@@ -316,7 +412,6 @@
             link.click();
         };
 
-        // Sponsor Logic
         window.fetchSponsors = async () => {
             try {
                 const snap = await getDocs(collection(db, "edu_heart_sponsors"));
@@ -338,10 +433,9 @@
             e.preventDefault();
             const btn = document.getElementById('btnSponsor'); btn.innerText = "PROCESSING..."; btn.disabled = true;
             try {
-                // Simplified sponsor logic assuming you'll wire up storage if needed later, using base64 for quickness or standard file path
                 const name = document.getElementById('spName').value;
                 const cat = document.getElementById('spCategory').value;
-                await addDoc(collection(db, "edu_heart_sponsors"), { name: name, category: cat, logo: 'https://via.placeholder.com/150' }); // Placeholder logic to prevent storage config errors
+                await addDoc(collection(db, "edu_heart_sponsors"), { name: name, category: cat, logo: 'https://via.placeholder.com/150' }); 
                 document.getElementById('sponsorForm').reset();
                 await fetchSponsors();
             } catch(err) {}
