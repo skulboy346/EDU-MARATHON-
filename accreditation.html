@@ -49,7 +49,12 @@
             const errorMsg = document.getElementById('login-error');
             const pin = pinInput.value.trim().toUpperCase();
             
-            if(pin === '10KM26' || pin === '3KM26' || pin === 'CREW26') {
+            const validPins = [
+                '10KM26', '3KM26', 'CREW26', 
+                'PROTO26', 'LOGIS26', 'MEDIC26', 'MEDIA26', 'TECH26'
+            ];
+
+            if(validPins.includes(pin)) {
                 const modal = document.getElementById('login-modal');
                 modal.style.display = 'none'; 
                 
@@ -91,37 +96,65 @@
         let activeConfig = {};
 
         // Helper to get today's date formatted nicely (e.g., "May 29")
-        const getToday = () => new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const getTodayDate = () => new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        // Helper to get the exact time (e.g., "06:45 AM")
+        const getExactTime = () => new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+        const cMap = {
+            'orange': { nav: 'bg-orange-900/40 border-orange-500', text: 'text-orange-400', ring: 'focus:ring-orange-500', btn: 'bg-orange-600 hover:bg-orange-500', border: 'border-orange-500' },
+            'green': { nav: 'bg-green-900/40 border-green-500', text: 'text-green-400', ring: 'focus:ring-green-500', btn: 'bg-green-600 hover:bg-green-500', border: 'border-green-500' },
+            'blue': { nav: 'bg-blue-900/40 border-blue-500', text: 'text-blue-400', ring: 'focus:ring-blue-500', btn: 'bg-blue-600 hover:bg-blue-500', border: 'border-blue-500' },
+            'purple': { nav: 'bg-purple-900/40 border-purple-500', text: 'text-purple-400', ring: 'focus:ring-purple-500', btn: 'bg-purple-600 hover:bg-purple-500', border: 'border-purple-500' },
+            'yellow': { nav: 'bg-yellow-900/40 border-yellow-500', text: 'text-yellow-400', ring: 'focus:ring-yellow-500', btn: 'bg-yellow-600 hover:bg-yellow-500', border: 'border-yellow-500' },
+            'red': { nav: 'bg-red-900/40 border-red-500', text: 'text-red-400', ring: 'focus:ring-red-500', btn: 'bg-red-600 hover:bg-red-500', border: 'border-red-500' },
+            'pink': { nav: 'bg-pink-900/40 border-pink-500', text: 'text-pink-400', ring: 'focus:ring-pink-500', btn: 'bg-pink-600 hover:bg-pink-500', border: 'border-pink-500' },
+            'teal': { nav: 'bg-teal-900/40 border-teal-500', text: 'text-teal-400', ring: 'focus:ring-teal-500', btn: 'bg-teal-600 hover:bg-teal-500', border: 'border-teal-500' }
+        };
 
         window.activateDesk = async (pin) => {
-            if(pin === '10KM26') activeConfig = { filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
-            else if(pin === '3KM26') activeConfig = { filter: '3KM', db: 'edu_heart_run', color: 'green', title: '3KM WALK DESK' };
-            else if(pin === 'CREW26') activeConfig = { filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'FESTIVAL CREW DESK' };
+            if(pin === '10KM26') activeConfig = { type: 'runner', filter: '10KM', db: 'edu_heart_run', color: 'orange', title: '10KM ENDURANCE DESK' };
+            else if(pin === '3KM26') activeConfig = { type: 'runner', filter: '3KM', db: 'edu_heart_run', color: 'green', title: '3KM WALK DESK' };
+            else if(pin === 'CREW26') activeConfig = { type: 'crew', filter: 'ALL', db: 'edu_heart_volunteers', color: 'blue', title: 'MASTER CREW DESK' };
+            else if(pin === 'PROTO26') activeConfig = { type: 'crew', filter: 'Protocol', db: 'edu_heart_volunteers', color: 'purple', title: 'PROTOCOL LEAD' };
+            else if(pin === 'LOGIS26') activeConfig = { type: 'crew', filter: 'Logistics', db: 'edu_heart_volunteers', color: 'yellow', title: 'LOGISTICS LEAD' };
+            else if(pin === 'MEDIC26') activeConfig = { type: 'crew', filter: 'Medical', db: 'edu_heart_volunteers', color: 'red', title: 'MEDICAL LEAD' };
+            else if(pin === 'MEDIA26') activeConfig = { type: 'crew', filter: 'Media', db: 'edu_heart_volunteers', color: 'pink', title: 'MEDIA LEAD' };
+            else if(pin === 'TECH26') activeConfig = { type: 'crew', filter: 'Technical Official', db: 'edu_heart_volunteers', color: 'teal', title: 'TECH OFFICIAL LEAD' };
 
-            document.getElementById('desk-nav').classList.add(`bg-${activeConfig.color}-900/40`, `border-${activeConfig.color}-500`);
+            const c = cMap[activeConfig.color];
+            
+            document.getElementById('desk-nav').className = `p-4 border-b flex justify-between items-center shadow-lg ${c.nav}`;
             document.getElementById('desk-title').innerText = activeConfig.title;
-            document.getElementById('desk-title').classList.add(`text-${activeConfig.color}-400`);
-            document.getElementById('search').classList.replace('focus:ring-white', `focus:ring-${activeConfig.color}-500`);
+            document.getElementById('desk-title').className = `text-2xl font-black uppercase ${c.text}`;
+            document.getElementById('search').className = `w-full bg-slate-800 py-4 pl-12 pr-4 rounded-xl text-white font-bold outline-none focus:ring-2 ${c.ring} border border-slate-600 transition shadow-inner`;
 
             window.loadDeskData();
         };
 
         window.loadDeskData = async () => {
-            document.getElementById('grid').innerHTML = `<div class="col-span-full text-center py-10 font-bold tracking-widest text-${activeConfig.color}-400">SYNCING SECURE DATA...</div>`;
+            const c = cMap[activeConfig.color];
+            document.getElementById('grid').innerHTML = `<div class="col-span-full text-center py-10 font-bold tracking-widest ${c.text}">SYNCING SECURE DATA...</div>`;
             const snap = await getDocs(collection(db, activeConfig.db));
             deskData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             
-            if(activeConfig.filter !== 'ALL') deskData = deskData.filter(r => r.category && r.category.includes(activeConfig.filter));
+            if(activeConfig.filter !== 'ALL') {
+                if (activeConfig.type === 'runner') {
+                    deskData = deskData.filter(r => r.category && r.category.includes(activeConfig.filter));
+                } else {
+                    deskData = deskData.filter(r => r.role === activeConfig.filter);
+                }
+            }
             renderUI(deskData);
         };
 
         function renderUI(dataList) {
-            const today = getToday();
+            const today = getTodayDate();
+            const c = cMap[activeConfig.color];
             
-            // Set the counter based on desk type
             let presentCount = 0;
-            if(activeConfig.filter === 'ALL') {
-                presentCount = deskData.filter(r => r.attendance && r.attendance.includes(today)).length;
+            if(activeConfig.type === 'crew') {
+                // Check if any log entry starts with today's date
+                presentCount = deskData.filter(r => r.attendance && r.attendance.some(log => log.startsWith(today))).length;
             } else {
                 presentCount = deskData.filter(r => r.accredited).length;
             }
@@ -137,9 +170,8 @@
                 let btnText = "MARK PRESENT";
                 let clearedText = "CLEARED";
                 
-                // Smart Daily Register Logic
-                if (activeConfig.filter === 'ALL') {
-                    isCleared = r.attendance && r.attendance.includes(today);
+                if (activeConfig.type === 'crew') {
+                    isCleared = r.attendance && r.attendance.some(log => log.startsWith(today));
                     btnText = "MARK PRESENT TODAY";
                     clearedText = "CLEARED TODAY";
                 } else {
@@ -148,14 +180,14 @@
 
                 const btn = isCleared 
                     ? `<button disabled class="w-full mt-3 bg-slate-800 text-slate-500 py-3 rounded-lg font-black tracking-widest border border-slate-700">${clearedText} <i class="fa-solid fa-check ml-1"></i></button>` 
-                    : `<button onclick="checkIn('${r.id}')" id="b-${r.id}" class="w-full mt-3 bg-${activeConfig.color}-600 text-white py-3 rounded-lg font-black tracking-widest hover:bg-${activeConfig.color}-500 transition shadow-[0_0_15px_rgba(0,0,0,0.4)]">${btnText}</button>`;
+                    : `<button onclick="checkIn('${r.id}')" id="b-${r.id}" class="w-full mt-3 ${c.btn} text-white py-3 rounded-lg font-black tracking-widest transition shadow-[0_0_15px_rgba(0,0,0,0.4)]">${btnText}</button>`;
                 
                 grid.innerHTML += `
-                    <div class="bg-slate-800/80 p-5 rounded-2xl border-l-4 border-${activeConfig.color}-500 shadow-xl">
+                    <div class="bg-slate-800/80 p-5 rounded-2xl border-l-4 ${c.border} shadow-xl">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <h3 class="font-black text-xl text-white uppercase">${r.title || ''} ${r.name}</h3>
-                                <p class="text-xs text-${activeConfig.color}-400 font-bold uppercase tracking-widest">${r.bibNumber ? 'RUNNER' : r.role}</p>
+                                <p class="text-xs ${c.text} font-bold uppercase tracking-widest">${r.bibNumber ? 'RUNNER' : r.role}</p>
                             </div>
                             <span class="text-3xl font-black font-[Oswald] text-slate-600">${r.bibNumber ? '#'+r.bibNumber : ''}</span>
                         </div>
@@ -170,27 +202,29 @@
         };
 
         window.checkIn = async (id) => {
-            const msg = activeConfig.filter === 'ALL' ? "Check this Crew Member in for TODAY'S shift?" : "Check this Runner into the event?";
+            const msg = activeConfig.type === 'crew' ? "Check this Crew Member in for TODAY'S shift?" : "Check this Runner into the event?";
             if(!confirm(msg)) return;
             
             if (navigator.vibrate) navigator.vibrate(50);
             document.getElementById(`b-${id}`).innerText = '...';
             
             const record = deskData.find(r => r.id === id);
-            const today = getToday();
+            const today = getTodayDate();
+            const exactTime = getExactTime();
+            
+            // Format: "May 29 - 06:45 AM"
+            const logEntry = `${today} - ${exactTime}`;
 
             try {
-                if (activeConfig.filter === 'ALL') {
-                    // CREW DAILY ATTENDANCE
+                if (activeConfig.type === 'crew') {
                     await updateDoc(doc(db, activeConfig.db, id), { 
-                        attendance: arrayUnion(today),
+                        attendance: arrayUnion(logEntry),
                         accredited: true 
                     });
                     if (!record.attendance) record.attendance = [];
-                    record.attendance.push(today);
+                    record.attendance.push(logEntry);
                     record.accredited = true;
                 } else {
-                    // RUNNER ONE-TIME ACCREDITATION
                     await updateDoc(doc(db, activeConfig.db, id), { accredited: true });
                     record.accredited = true;
                 }
