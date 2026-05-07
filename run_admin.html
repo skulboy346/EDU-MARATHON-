@@ -381,8 +381,10 @@
                 window.fetchData();
                 
             } catch (e) {
-                console.error(e);
-                alert("Failed to send email. Please check your network connection or EmailJS limits.");
+                // EXACT ERROR CATCHER
+                let errorMsg = e.message || e.text || JSON.stringify(e) || "Unknown Error";
+                alert("EXACT ERROR: " + errorMsg);
+                
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }

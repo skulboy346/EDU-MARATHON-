@@ -291,7 +291,11 @@
                 try { 
                     await emailjs.send("service_1x7fybd", "EDU-HEART-RUN", { to_name: name, to_email: email, bib_number: formattedBib, category: category }); 
                     await updateDoc(doc(db, "edu_heart_run", docRef.id), { emailSent: true });
-                } catch(err) { console.error("Auto email failed", err); }
+                } catch(err) { 
+                    let errorMsg = err.message || err.text || JSON.stringify(err) || "Unknown Error";
+                    alert("RUNNER EMAIL EXACT ERROR: " + errorMsg);
+                    console.error("Auto email failed", err);
+                }
 
                 document.getElementById('marathonForm').classList.add('hidden'); document.getElementById('successSection').classList.remove('hidden');
             } catch (error) { alert("Registration Error. Please try again."); btn.disabled = false; btn.innerHTML = 'CONFIRM REGISTRATION'; }

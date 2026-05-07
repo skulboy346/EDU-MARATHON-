@@ -195,7 +195,11 @@
                 try { 
                     await emailjs.send("service_1x7fybd", "EDU-VOLUNTEER", { to_name: name.split(' ')[0], to_email: email, role: role, general_link: groupLinks["General"], unit_link: groupLinks[role] }); 
                     await updateDoc(doc(db, "edu_heart_volunteers", docRef.id), { emailSent: true });
-                } catch(err) { console.error("Auto email failed", err); }
+                } catch(err) { 
+                    let errorMsg = err.message || err.text || JSON.stringify(err) || "Unknown Error";
+                    alert("CREW EMAIL EXACT ERROR: " + errorMsg);
+                    console.error("Auto email failed", err); 
+                }
                 
                 document.getElementById('volunteerForm').classList.add('hidden'); document.getElementById('successSection').classList.remove('hidden');
             } catch(e) { alert("Registration Error. Please try again."); btn.disabled = false; btn.innerHTML = 'CONFIRM REGISTRATION'; }
