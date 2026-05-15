@@ -186,14 +186,14 @@
 
         const deptPasswords = { "AESA": "AESA26", "NAAES": "NAAES26", "ULSESA": "ULSESA26", "SSESA": "SSESA26", "TVESA": "TEVES26", "EFSA": "EFSA26", "EMSA": "EMSA26", "NAPHER-SD": "NAPHER26" };
         
-        // Updated Dept Codes mapped to arrays
+        // Corrected Dept Codes mapped to arrays
         const deptCodes = { 
             "AESA": ["0317"], 
             "NAAES": ["0301"], 
             "ULSESA": ["0310"], 
             "SSESA": ["0323"], 
             "TVESA": ["0319"], 
-            "EFSA": ["0305", "0302"], 
+            "EFSA": ["0305", "0324"], // FIXED HERE
             "EMSA": ["0302"], 
             "NAPHER-SD": ["0314"] 
         };
@@ -404,7 +404,7 @@
             if(parseInt(document.getElementById('editIndex').value) === index) window.cancelEdit();
         };
 
-        // NEW: Print individual sport PDF
+        // Print individual sport PDF
         window.downloadSportPDF = (targetSport) => {
             const letterhead = document.getElementById('print-letterhead');
             const buttons = document.querySelectorAll('.hide-on-print'); 
@@ -443,7 +443,7 @@
             });
         };
 
-        // UPDATED: Print Master Roster PDF
+        // Print Master Roster PDF
         window.downloadRosterPDF = () => {
             const letterhead = document.getElementById('print-letterhead');
             const buttons = document.querySelectorAll('.hide-on-print'); 
